@@ -1,0 +1,45 @@
+site_name: Blue Pill Bare-Metal
+copyright: Copyright &copy; 2026 Pablo Palazón
+docs_dir: docs
+
+extra:
+  generator: true
+
+nav:
+  - Memory Map: stm32f103c8t6-memory-map.md
+  - Build Process: build-process.md
+  - Linker And Startup: linker-startup.md
+  - Applications:
+      - Blink: apps/blink.md
+  - Reference:
+      - Acronyms: acronyms.md
+
+theme:
+  name: material
+  palette:
+    primary: blue grey
+    accent: orange
+  font:
+    text: Saira
+    code: JetBrains Mono
+  features:
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
+
+plugins:
+  - search
+  - mermaid2

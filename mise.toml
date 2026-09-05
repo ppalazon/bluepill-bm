@@ -1,0 +1,7 @@
+[tools]
+python = "3"
+
+[env]
+PROJECT_ROOT = "{{config_root}}"
+CPATH = "{{config_root}}/include"
+_.python.venv = { path = ".venv", create = true }

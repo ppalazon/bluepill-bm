@@ -1,0 +1,33 @@
+# Firmware build outputs
+build/
+*.o
+*.d
+*.su
+*.cyclo
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+
+# Python virtual environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# MkDocs generated site
+site/
+
+# Local tool/editor state
+.cache/
+.clangd
+.vscode/
+.idea/
+
+# OS metadata
+.DS_Store
+Thumbs.db
