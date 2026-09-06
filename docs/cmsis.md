@@ -433,7 +433,64 @@ behavior.
 
 ## How CMSIS Could Fit This Project
 
-A conservative migration path would be:
+This project keeps a hard boundary between direct-register examples and CMSIS
+examples.
+
+Application names define which include paths are enabled:
+
+| App prefix | Meaning | Header policy |
+| --- | --- | --- |
+| `bare-*` | Direct-register examples | Use only local project headers, especially `include/stm32f103c8t6.h` |
+| `cmsis-*` | CMSIS-based examples | May use vendored STM32CubeF1 CMSIS headers |
+
+The Makefile implements that rule with this condition:
+
+```make
+ifneq ($(filter cmsis-%,$(APP)),)
+CFLAGS += -I$(CMSIS_CORE_INC) -I$(CMSIS_DEVICE_INC) -DUSE_CMSIS
+endif
+```
+
+The expected vendor layout is:
+
+```text
+vendor/
+  STM32CubeF1/
+    Drivers/
+      CMSIS/
+        Core/
+          Include/
+        Device/
+          ST/
+            STM32F1xx/
+              Include/
+```
+
+Those paths are not added for `bare-*` apps. For example,
+`make APP=bare-blink` does not see the STM32CubeF1 CMSIS headers.
+
+CMSIS include paths are only added for commands such as:
+
+```sh
+make APP=cmsis-blink
+```
+
+The editor configuration follows the same rule. The project does not use a
+global `CPATH` for headers because that would make all folders see the same
+includes. Instead, clangd uses folder-level `.clangd` files:
+
+```text
+.clangd                     common Cortex-M target flags
+src/.clangd                 local runtime headers only
+apps/bare-blink/.clangd     local bare-register headers only
+apps/cmsis-*/.clangd        local headers plus vendored CMSIS headers
+```
+
+When a `cmsis-*` application is added, give that app its own `.clangd` fragment
+with the CMSIS include paths. Do not add CMSIS include paths to the root `.clangd`,
+because that would also expose them to `bare-*` applications.
+
+A conservative migration path is:
 
 1. Keep the current direct-register learning code.
 2. Add CMSIS-Core only when standard Cortex-M helpers are useful.

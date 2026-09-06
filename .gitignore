@@ -24,7 +24,6 @@ site/
 
 # Local tool/editor state
 .cache/
-.clangd
 .vscode/
 .idea/
 

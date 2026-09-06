@@ -4,9 +4,10 @@ PROJECT := bluepill-$(APP)
 BUILD_DIR := build
 SRC_DIR := src
 APP_DIR := apps/$(APP)
-STARTUP_DIR := startup
 LINKER_SCRIPT := linker/STM32F103C8TX_FLASH.ld
 OPENOCD_CFG := openocd/bluepill.cfg
+CMSIS_CORE_INC := vendor/STM32CubeF1/Drivers/CMSIS/Core/Include
+CMSIS_DEVICE_INC := vendor/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include
 
 CC := arm-none-eabi-gcc
 OBJCOPY := arm-none-eabi-objcopy
@@ -19,6 +20,12 @@ COMMON_FLAGS := $(CPU_FLAGS) -Wall -Wextra -Werror -ffunction-sections -fdata-se
 CFLAGS := $(COMMON_FLAGS) -std=c11 -Iinclude
 ASFLAGS := $(COMMON_FLAGS) -x assembler-with-cpp
 LDFLAGS := $(CPU_FLAGS) -T$(LINKER_SCRIPT) -nostartfiles -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(PROJECT).map --specs=nano.specs --specs=nosys.specs
+
+# Vendor CMSIS headers are only visible to applications named cmsis-*.
+# Bare-register applications stay limited to the local include/ directory.
+ifneq ($(filter cmsis-%,$(APP)),)
+CFLAGS += -I$(CMSIS_CORE_INC) -I$(CMSIS_DEVICE_INC) -DUSE_CMSIS
+endif
 
 C_SOURCES := $(wildcard $(SRC_DIR)/*.c)
 C_SOURCES += $(wildcard $(APP_DIR)/*.c)

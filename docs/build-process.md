@@ -173,6 +173,18 @@ path. That is how application code can include the local STM32 register header:
 #include "stm32f103c8t6.h"
 ```
 
+Vendor CMSIS include paths are intentionally conditional. They are only added
+when the selected application name starts with `cmsis-`:
+
+```make
+ifneq ($(filter cmsis-%,$(APP)),)
+CFLAGS += -I$(CMSIS_CORE_INC) -I$(CMSIS_DEVICE_INC) -DUSE_CMSIS
+endif
+```
+
+This keeps `bare-*` applications limited to the local `include/` directory while
+allowing future `cmsis-*` applications to use vendored STM32CubeF1 CMSIS headers.
+
 ## Assembly Flags
 
 Assembly files use:
