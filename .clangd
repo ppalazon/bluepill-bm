@@ -5,3 +5,4 @@ CompileFlags:
     - arm-none-eabi
     - -mcpu=cortex-m3
     - -mthumb
+    - -DSTM32F103xB

@@ -24,7 +24,7 @@ LDFLAGS := $(CPU_FLAGS) -T$(LINKER_SCRIPT) -nostartfiles -Wl,--gc-sections -Wl,-
 # Vendor CMSIS headers are only visible to applications named cmsis-*.
 # Bare-register applications stay limited to the local include/ directory.
 ifneq ($(filter cmsis-%,$(APP)),)
-CFLAGS += -I$(CMSIS_CORE_INC) -I$(CMSIS_DEVICE_INC) -DUSE_CMSIS
+CFLAGS += -I$(CMSIS_CORE_INC) -I$(CMSIS_DEVICE_INC) -DUSE_CMSIS -DSTM32F103xB
 endif
 
 C_SOURCES := $(wildcard $(SRC_DIR)/*.c)
