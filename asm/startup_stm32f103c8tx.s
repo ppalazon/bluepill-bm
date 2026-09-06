@@ -1,5 +1,19 @@
 /*
- * Minimal startup file for STM32F103C8T6 / Cortex-M3.
+ * Reference assembly startup implementation for STM32F103C8T6 / Cortex-M3.
+ *
+ * The active startup file used by the build is:
+ *
+ *   src/startup_stm32f103.c
+ *
+ * Keep this file in sync with the C startup file when changing:
+ *
+ * - vector table order
+ * - Reset_Handler behavior
+ * - linker symbols used for .data/.bss initialization
+ * - default interrupt handler behavior
+ *
+ * This file lives under asm/ as a learning/reference version of the same startup
+ * flow. It is not linked by the current Makefile.
  *
  * This file follows the standard Cortex-M startup pattern:
  *

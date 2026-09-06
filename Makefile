@@ -22,7 +22,7 @@ LDFLAGS := $(CPU_FLAGS) -T$(LINKER_SCRIPT) -nostartfiles -Wl,--gc-sections -Wl,-
 
 C_SOURCES := $(wildcard $(SRC_DIR)/*.c)
 C_SOURCES += $(wildcard $(APP_DIR)/*.c)
-ASM_SOURCES := $(wildcard $(STARTUP_DIR)/*.s)
+ASM_SOURCES :=
 
 ifeq ($(wildcard $(APP_DIR)),)
 $(error Unknown APP '$(APP)': expected directory $(APP_DIR))

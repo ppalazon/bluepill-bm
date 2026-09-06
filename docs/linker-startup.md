@@ -624,21 +624,77 @@ There is no operating system on the STM32F103C8T6. After reset, nothing prepares
 RAM, initializes variables, or calls `main` unless the firmware provides that
 code.
 
-The startup file does that minimal runtime setup.
-
-The current startup file is:
+The startup file does that minimal runtime setup. In this project, the active
+startup implementation is written in C:
 
 ```text
-startup/startup_stm32f103c8tx.s
+src/startup_stm32f103.c
 ```
 
-It provides:
+This is the file that the current `Makefile` compiles and links into the final
+firmware image.
 
-1. CPU assembly mode declarations.
+The project also keeps an assembly version here:
+
+```text
+asm/startup_stm32f103c8tx.s
+```
+
+That assembly file is only for education and reference. It shows the same startup
+ideas using explicit Cortex-M assembly, but it is not the current way this
+project starts the microcontroller and it is not linked by the current Makefile.
+
+The active C startup provides:
+
+1. Linker symbol declarations for `.data`, `.bss`, and the stack top.
 2. A vector table in `.isr_vector`.
-3. `Reset_Handler`.
+3. Weak default handlers for exceptions and interrupts.
 4. `Default_Handler`.
-5. Weak aliases for interrupts.
+5. `Reset_Handler`.
+
+## Why C Startup Works Here
+
+Many embedded projects write startup code in assembly because startup runs before
+the normal C runtime is initialized. That is still true here, so the C startup
+must be simple and careful.
+
+For this STM32F103C8T6/Cortex-M3 project, C startup is practical because the
+Cortex-M reset sequence already does the most important CPU setup before calling
+`Reset_Handler`: it loads the initial stack pointer from vector table word 0.
+
+The vector table starts like this in `src/startup_stm32f103.c`:
+
+```c
+const uint32_t g_pfnVectors[] __attribute__((section(".isr_vector"), used)) = {
+    (uint32_t)&_estack,
+    (uint32_t)&Reset_Handler,
+    /* more exception and interrupt handlers */
+};
+```
+
+At reset, the CPU reads `_estack` into `SP`, then branches to `Reset_Handler`.
+That means the C function `Reset_Handler` can run with a valid stack.
+
+This is why the active C `Reset_Handler` does not manually write `SP`. The
+hardware has already done it.
+
+This approach depends on a few conditions:
+
+1. The CPU architecture must load the initial stack pointer from the vector table.
+2. The vector table must be placed at the boot address, which this linker script does with `.isr_vector` first in Flash.
+3. The C `Reset_Handler` must not rely on initialized global/static variables before it copies `.data` and clears `.bss`.
+4. The compiler must not insert runtime assumptions that require initialized C library state before startup has prepared RAM.
+
+Those conditions are true enough for this minimal Cortex-M3 firmware.
+
+This may not be valid on other systems. Some CPUs start executing from a reset
+address without automatically setting up a stack. Some systems need assembly to
+select a CPU mode, initialize stack pointers for several modes, configure memory
+controllers, set exception state, or perform low-level ABI setup before any C
+function can run. On those systems, assembly startup is not optional.
+
+For this project, C keeps the startup easier to read while still showing the real
+bare-metal responsibilities.
 
 ## Why Cortex-M Needs A Vector Table
 
@@ -650,13 +706,14 @@ two words from the vector table:
 | Word 0            | Initial stack pointer value |
 | Word 1            | Reset handler address       |
 
-For this project, those words are:
+For this project, those words are defined in C in `src/startup_stm32f103.c`:
 
-```asm
-.section .isr_vector,"a",%progbits
-g_pfnVectors:
-  .word _estack
-  .word Reset_Handler
+```c
+const uint32_t g_pfnVectors[] __attribute__((section(".isr_vector"), used)) = {
+    (uint32_t)&_estack,
+    (uint32_t)&Reset_Handler,
+    /* more exception and interrupt handlers */
+};
 ```
 
 The first word loads `SP`. The second word loads `PC` and execution starts at
@@ -664,12 +721,12 @@ The first word loads `SP`. The second word loads `PC` and execution starts at
 
 After that, the vector table contains exception and interrupt handler addresses:
 
-```asm
-  .word NMI_Handler
-  .word HardFault_Handler
-  .word MemManage_Handler
-  .word BusFault_Handler
-  .word UsageFault_Handler
+```c
+    (uint32_t)&NMI_Handler,
+    (uint32_t)&HardFault_Handler,
+    (uint32_t)&MemManage_Handler,
+    (uint32_t)&BusFault_Handler,
+    (uint32_t)&UsageFault_Handler,
 ```
 
 Peripheral interrupts are also listed in the STM32-defined order. If an interrupt
@@ -677,94 +734,74 @@ fires, the CPU looks up the handler address in this table.
 
 ## Reset_Handler
 
-The current reset handler performs the standard bare-metal sequence.
+The active reset handler is the C function `Reset_Handler` in
+`src/startup_stm32f103.c`. It performs the standard bare-metal sequence.
 
-First it sets the stack pointer from the linker symbol:
+First it calls system setup:
 
-```asm
-ldr r0, =_estack
-mov sp, r0
-```
-
-Then it calls system setup:
-
-```asm
-bl SystemInit
+```c
+SystemInit();
 ```
 
 In this project, `SystemInit` keeps the default clock setup simple.
 
 Then it copies `.data` from Flash LMA to RAM VMA:
 
-```asm
-ldr r0, =_sdata
-ldr r1, =_edata
-ldr r2, =_sidata
-movs r3, #0
-```
-
-Conceptually this is:
-
 ```c
-uint32_t *dst = &_sdata;
-uint32_t *end = &_edata;
-uint32_t *src = &_sidata;
+uint32_t *p_src_mem = &_sidata;
+uint32_t *p_dest_mem = &_sdata;
 
-while (dst < end) {
-  *dst++ = *src++;
+while (p_dest_mem < &_edata) {
+  *p_dest_mem++ = *p_src_mem++;
 }
 ```
+
+`_sidata` is the Flash load address of `.data`. `_sdata` and `_edata` describe
+the RAM address range where `.data` must live while the program runs.
 
 Then it clears `.bss`:
 
-```asm
-ldr r2, =_sbss
-ldr r4, =_ebss
-movs r3, #0
-```
-
-Conceptually this is:
-
 ```c
-uint32_t *dst = &_sbss;
-uint32_t *end = &_ebss;
+p_dest_mem = &_sbss;
 
-while (dst < end) {
-  *dst++ = 0;
+while (p_dest_mem < &_ebss) {
+  *p_dest_mem++ = 0;
 }
 ```
 
-Then it enters the C program:
+`_sbss` and `_ebss` describe the RAM address range occupied by zero-initialized
+global/static variables.
 
-```asm
-bl main
+Then it enters the application:
+
+```c
+main();
 ```
 
 If `main` returns, startup loops forever:
 
-```asm
-5:
-  b 5b
+```c
+while (1) {
+}
 ```
 
 Returning from `main` has nowhere useful to go in a bare-metal program.
 
 ## Weak Interrupt Handlers
 
-The startup file gives every handler a weak default implementation:
+The active C startup gives every handler a weak default implementation with this
+macro:
 
-```asm
-.macro weak_alias name
-  .weak \name
-  .thumb_set \name, Default_Handler
-.endm
+```c
+#define DEFAULT_HANDLER(name) \
+  void name(void) __attribute__((weak, alias("Default_Handler")))
 ```
 
 For example:
 
-```asm
-weak_alias SysTick_Handler
-weak_alias EXTI0_IRQHandler
+```c
+DEFAULT_HANDLER(SysTick_Handler);
+DEFAULT_HANDLER(EXTI0_IRQHandler);
 ```
 
 Weak means application code can override the handler by defining a real function
@@ -781,69 +818,56 @@ loops forever. That is safer than jumping to an undefined address.
 
 ## Creating A Startup File From Scratch
 
-Start by selecting the assembly syntax, CPU, and instruction set:
+For this project, create the startup file in C unless you have a specific reason
+to write assembly.
 
-```asm
-.syntax unified
-.cpu cortex-m3
-.thumb
+Start by declaring the linker symbols that the startup code needs:
+
+```c
+extern uint32_t _estack;
+extern uint32_t _sidata;
+extern uint32_t _sdata;
+extern uint32_t _edata;
+extern uint32_t _sbss;
+extern uint32_t _ebss;
 ```
 
-Export the vector table and default handler symbols:
+Declare the startup functions:
 
-```asm
-.global g_pfnVectors
-.global Default_Handler
+```c
+void Reset_Handler(void);
+void Default_Handler(void);
+void SystemInit(void);
+int main(void);
 ```
 
-Reference linker symbols that the startup code needs:
+Create a weak-handler macro:
 
-```asm
-.word _sidata
-.word _sdata
-.word _edata
-.word _sbss
-.word _ebss
+```c
+#define DEFAULT_HANDLER(name) \
+  void name(void) __attribute__((weak, alias("Default_Handler")))
 ```
 
-Create `Reset_Handler` in executable code:
+Use it for core exceptions and peripheral interrupts:
 
-```asm
-.section .text.Reset_Handler
-.weak Reset_Handler
-.thumb_func
-.type Reset_Handler, %function
-Reset_Handler:
-  ldr r0, =_estack
-  mov sp, r0
-  bl SystemInit
-  /* copy .data */
-  /* clear .bss */
-  bl main
-1:
-  b 1b
+```c
+DEFAULT_HANDLER(NMI_Handler);
+DEFAULT_HANDLER(HardFault_Handler);
+DEFAULT_HANDLER(SysTick_Handler);
+DEFAULT_HANDLER(WWDG_IRQHandler);
+/* add the rest of the STM32F103 handlers in vector-table order */
 ```
 
-Create `Default_Handler`:
+Create the vector table in `.isr_vector`:
 
-```asm
-.section .text.Default_Handler,"ax",%progbits
-.thumb_func
-Default_Handler:
-  b Default_Handler
-```
-
-Create the vector table in its own section:
-
-```asm
-.section .isr_vector,"a",%progbits
-.type g_pfnVectors, %object
-g_pfnVectors:
-  .word _estack
-  .word Reset_Handler
-  .word NMI_Handler
-  .word HardFault_Handler
-  /* more exception and interrupt handlers */
+```c
+const uint32_t g_pfnVectors[] __attribute__((section(".isr_vector"), used)) = {
+    (uint32_t)&_estack,
+    (uint32_t)&Reset_Handler,
+    (uint32_t)&NMI_Handler,
+    (uint32_t)&HardFault_Handler,
+    /* reserved entries and the rest of the handlers */
+};
 ```
 
 The section name `.isr_vector` must match the linker script:
@@ -852,20 +876,46 @@ The section name `.isr_vector` must match the linker script:
 KEEP(*(.isr_vector))
 ```
 
-Then add weak aliases for handlers:
+Create `Default_Handler`:
 
-```asm
-.macro weak_alias name
-  .weak \name
-  .thumb_set \name, Default_Handler
-.endm
+```c
+void Default_Handler(void) {
+  while (1) {
+  }
+}
+```
 
-weak_alias NMI_Handler
-weak_alias HardFault_Handler
+Create `Reset_Handler`:
+
+```c
+void Reset_Handler(void) {
+  SystemInit();
+
+  uint32_t *p_src_mem = &_sidata;
+  uint32_t *p_dest_mem = &_sdata;
+
+  while (p_dest_mem < &_edata) {
+    *p_dest_mem++ = *p_src_mem++;
+  }
+
+  p_dest_mem = &_sbss;
+  while (p_dest_mem < &_ebss) {
+    *p_dest_mem++ = 0;
+  }
+
+  main();
+
+  while (1) {
+  }
+}
 ```
 
 The exact interrupt order must match the STM32F103 medium-density vector table
 from the reference manual or startup file template.
+
+Use `asm/startup_stm32f103c8tx.s` only as a reference to compare the same ideas in
+assembly. Do not enable it in the build unless you intentionally replace the C
+startup implementation.
 
 ## Relocation During Linking And Startup
 
@@ -887,12 +937,15 @@ _sdata = .;
 _edata = .;
 ```
 
-The startup file consumes those symbols:
+The active C startup file consumes those symbols:
 
-```asm
-ldr r0, =_sdata
-ldr r1, =_edata
-ldr r2, =_sidata
+```c
+uint32_t *p_src_mem = &_sidata;
+uint32_t *p_dest_mem = &_sdata;
+
+while (p_dest_mem < &_edata) {
+  *p_dest_mem++ = *p_src_mem++;
+}
 ```
 
 The linker and startup file must agree. If the linker script names a symbol

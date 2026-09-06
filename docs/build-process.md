@@ -69,7 +69,6 @@ The source directories are:
 ```make
 SRC_DIR := src
 APP_DIR := apps/$(APP)
-STARTUP_DIR := startup
 ```
 
 The C sources are all shared C files plus all C files for the selected app:
@@ -79,10 +78,11 @@ C_SOURCES := $(wildcard $(SRC_DIR)/*.c)
 C_SOURCES += $(wildcard $(APP_DIR)/*.c)
 ```
 
-The assembly sources come from the startup directory:
+Assembly sources are disabled by default. The active startup implementation is
+the C file `src/startup_stm32f103.c`:
 
 ```make
-ASM_SOURCES := $(wildcard $(STARTUP_DIR)/*.s)
+ASM_SOURCES :=
 ```
 
 For `APP=blink`, the important inputs are:
@@ -90,7 +90,6 @@ For `APP=blink`, the important inputs are:
 ```text
 src/*.c
 apps/blink/*.c
-startup/*.s
 linker/STM32F103C8TX_FLASH.ld
 ```
 
@@ -252,7 +251,9 @@ apps/blink/main.c -> build/apps/blink/main.o
 src/system_stm32f103.c -> build/src/system_stm32f103.o
 ```
 
-The startup assembly file is also assembled into an object file:
+This project keeps an assembly startup file under `asm/` as a reference, but
+the active build now uses the C startup file in `src/startup_stm32f103.c`. If an
+assembly startup file is enabled later, it is assembled into an object file with:
 
 ```make
 $(BUILD_DIR)/%.o: %.s
@@ -260,10 +261,10 @@ $(BUILD_DIR)/%.o: %.s
 	$(CC) $(ASFLAGS) -c $< -o $@
 ```
 
-For example:
+For example, if enabled:
 
 ```text
-startup/startup_stm32f103c8tx.s -> build/startup/startup_stm32f103c8tx.o
+asm/startup_stm32f103c8tx.s -> build/asm/startup_stm32f103c8tx.o
 ```
 
 An object file contains machine code and symbols, but it is not placed at final
@@ -289,7 +290,7 @@ script. Bare-metal firmware needs this because there is no operating system to
 decide where code and data go.
 
 `-nostartfiles` prevents GCC from linking the default C runtime startup files.
-This project provides its own Cortex-M startup file in `startup/`.
+This project provides its own Cortex-M startup file in `src/startup_stm32f103.c`.
 
 `-Wl,--gc-sections` passes `--gc-sections` to the linker. It removes unused input
 sections. This works well with `-ffunction-sections` and `-fdata-sections`.

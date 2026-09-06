@@ -98,6 +98,7 @@
 
 /* Register helpers. */
 #define RCC_REG(offset) STM32_REG32(RCC_BASE + (offset))
+#define FLASH_REG(offset) STM32_REG32(FLASH_INTERFACE_BASE + (offset))
 #define GPIO_REG(base, offset) STM32_REG32((base) + (offset))
 #define AFIO_REG(offset) STM32_REG32(AFIO_BASE + (offset))
 #define EXTI_REG(offset) STM32_REG32(EXTI_BASE + (offset))
@@ -116,6 +117,9 @@
 #define RCC_BDCR_OFFSET 0x20u
 #define RCC_CSR_OFFSET 0x24u
 
+/* Flash interface register offsets. */
+#define FLASH_ACR_OFFSET 0x00u
+
 #define RCC_CR RCC_REG(RCC_CR_OFFSET)
 #define RCC_CFGR RCC_REG(RCC_CFGR_OFFSET)
 #define RCC_CIR RCC_REG(RCC_CIR_OFFSET)
@@ -127,7 +131,11 @@
 #define RCC_BDCR RCC_REG(RCC_BDCR_OFFSET)
 #define RCC_CSR RCC_REG(RCC_CSR_OFFSET)
 
-/* RCC clock enable bits. */
+#define FLASH_ACR FLASH_REG(FLASH_ACR_OFFSET)
+
+/* RCC control and clock enable bits. */
+#define RCC_CR_HSION STM32_BIT(0)
+
 #define RCC_AHBENR_DMA1EN STM32_BIT(0)
 #define RCC_AHBENR_SRAMEN STM32_BIT(2)
 #define RCC_AHBENR_FLITFEN STM32_BIT(4)

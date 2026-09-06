@@ -4,10 +4,12 @@
 
 /* Blue Pill onboard LED: PC13, usually active-low. */
 #define LED_PIN 13u
+#define BLINK_DELAY 200000u
 
 static void delay(volatile uint32_t count) {
   while (count-- > 0u) {
-    /* Keep the CPU busy for one instruction so the loop is not optimized away. */
+    /* Keep the CPU busy for one instruction so the loop is not optimized away.
+     */
     __asm volatile("nop");
   }
 }
@@ -26,8 +28,8 @@ int main(void) {
    * PC13 is configured by GPIOC_CRH because CRH controls pins 8-15.
    * GPIOC_CRH address: 0x40011004
    * PC13 field: bits 23:20, mask 0x00F00000
-   * Effect: clears CNF13[1:0] and MODE13[1:0] to 0000, leaving other pins unchanged.
-   * Reset value 0x44444444 becomes 0x44044444.
+   * Effect: clears CNF13[1:0] and MODE13[1:0] to 0000, leaving other pins
+   * unchanged. Reset value 0x44444444 becomes 0x44044444.
    */
   GPIOC_CRH &= ~GPIO_CFG_MASK(LED_PIN);
 
@@ -46,10 +48,11 @@ int main(void) {
      * GPIOC_ODR address: 0x4001100C
      * GPIO_PIN(13): bit 13, mask 0x00002000
      * Effect: flips bit 13 only; 0 drives PC13 low, 1 drives PC13 high.
-     * Reset value 0x00000000 first becomes 0x00002000, then 0x00000000, and repeats.
-     * The onboard LED is usually active-low: low turns it on, high turns it off.
+     * Reset value 0x00000000 first becomes 0x00002000, then 0x00000000, and
+     * repeats. The onboard LED is usually active-low: low turns it on, high
+     * turns it off.
      */
     GPIOC_ODR ^= GPIO_PIN(LED_PIN);
-    delay(800000u);
+    delay(BLINK_DELAY);
   }
 }
