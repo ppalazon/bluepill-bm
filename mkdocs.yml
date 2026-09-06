@@ -7,6 +7,7 @@ extra:
 
 nav:
   - Memory Map: stm32f103c8t6-memory-map.md
+  - GPIO Peripheral: gpio.md
   - Build Process: build-process.md
   - Linker And Startup: linker-startup.md
   - Applications:

@@ -1,171 +1,107 @@
 # Bare Blink Application
 
-It blinks the board LED connected to PC13, which means Port C pin 13. On most
-Blue Pill boards this LED is active-low: driving PC13 low turns the LED on, and
-driving PC13 high turns the LED off.
+`bare-blink` is the first direct-register application in this project. It blinks
+the board LED connected to PC13, which means Port C pin 13.
+
+On most Blue Pill boards this LED is active-low: driving PC13 low turns the LED
+on, and driving PC13 high turns the LED off.
 
 The application does three things:
 
-1. Enable the GPIOC peripheral clock.
-2. Configure PC13 as a general-purpose push-pull output.
-3. Toggle PC13 forever, with a busy-wait delay between toggles.
+1. Enables the GPIOC peripheral clock.
+2. Configures PC13 as a general-purpose push-pull output.
+3. Toggles PC13 forever, with a busy-wait delay between toggles.
 
-## Micro configuration
+The GPIO concepts and reference manual links are summarized in
+[GPIO Peripheral](../gpio.md).
 
-### APB2 peripheral clock enable
+## Code Path
 
-![image](assets/img-20260904-183851.png)
+The application source is:
 
-GPIOC is connected to the APB2 peripheral bus. Before the CPU can safely access
-GPIOC registers, the GPIOC peripheral clock must be enabled in `RCC_APB2ENR`.
+```text
+apps/bare-blink/main.c
+```
 
-Code:
+It uses the local learning header:
+
+```text
+include/stm32f103c8t6.h
+```
+
+This app does not use CMSIS, HAL, LL, or STM32CubeF1 headers.
+
+## GPIOC Clock
+
+GPIOC is connected to the APB2 bus. Before the GPIOC registers can be used, the
+application enables the GPIOC peripheral clock:
 
 ```c
 RCC_APB2ENR |= RCC_APB2ENR_IOPCEN;
 ```
 
-Register details:
+The clock-enable register is summarized in
+[Registers You Use Most](../gpio.md#registers-you-use-most).
 
-| Item | Value |
-| --- | --- |
-| Register | `RCC_APB2ENR` |
-| Address | `0x40021018` |
-| Bit used | bit 4, `IOPCEN` |
-| Mask | `0x00000010` |
-| Operation | OR assignment, `|=` |
+## PC13 Configuration
 
-The operation sets bit 4 and leaves every other bit unchanged.
+PC13 is configured through `GPIOC_CRH` because pins 8 through 15 use the high
+configuration register.
 
-Assuming the reset value is `0x00000000`:
-
-```text
-Before: 0x00000000
-Mask:   0x00000010
-After:  0x00000010
-```
-
-After this, GPIOC is clocked and its configuration/output registers can be used.
-
-### GPIO Port C configuration
-
-![image](assets/img-20260904-183004.png)
-
-Each GPIO pin has a 4-bit configuration field. For pins 8 through 15, those
-fields live in `GPIOx_CRH`. Since the LED is on PC13, its configuration field is
-inside `GPIOC_CRH`.
-
-PC13 uses bits `23:20` in `GPIOC_CRH`:
-
-```text
-CNF13[1:0]  = bits 23:22
-MODE13[1:0] = bits 21:20
-```
-
-The code first clears the whole 4-bit PC13 field:
+The app clears the existing PC13 configuration field:
 
 ```c
 GPIOC_CRH &= ~GPIO_CFG_MASK(LED_PIN);
 ```
 
-Register details:
-
-| Item | Value |
-| --- | --- |
-| Register | `GPIOC_CRH` |
-| Address | `0x40011004` |
-| PC13 field | bits `23:20` |
-| Field mask | `0x00F00000` |
-| Clear mask | `~0x00F00000` |
-| Operation | AND assignment, `&=` |
-
-This clears `CNF13[1:0]` and `MODE13[1:0]` to `0000`, while preserving the
-configuration fields for the other GPIOC pins.
-
-Assuming the reset value is `0x44444444`:
-
-```text
-Before: 0x44444444
-Mask:   0xFF0FFFFF
-After:  0x44044444
-```
-
-Then the code writes the wanted PC13 mode:
+Then it writes the new mode:
 
 ```c
 GPIOC_CRH |= GPIO_CFG(LED_PIN, GPIO_MODE_OUTPUT_2MHZ, GPIO_CNF_OUTPUT_PP);
 ```
 
-The selected values are:
+That selects:
 
 | Field | Value | Meaning |
 | --- | --- | --- |
 | `MODE13[1:0]` | `0b10` | Output mode, max speed 2 MHz |
 | `CNF13[1:0]` | `0b00` | General-purpose push-pull output |
 
-Together, the PC13 field becomes `0010`:
+The configuration registers and push-pull mode are summarized in
+[GPIO Peripheral](../gpio.md).
 
-```text
-CNF13 MODE13
-00    10
-```
+## LED Toggle
 
-That 4-bit field is shifted into bits `23:20`, giving this value:
-
-```text
-GPIO_CFG(13, 0b10, 0b00) = 0x00200000
-```
-
-Assuming the previous value was `0x44044444`:
-
-```text
-Before: 0x44044444
-Mask:   0x00200000
-After:  0x44244444
-```
-
-At this point, PC13 is configured as a normal digital output pin.
-
-### GPIO Port C output register
-
-![image](assets/img-20260904-183444.png)
-
-Once PC13 is configured as an output, its output level is controlled by bit 13 in
-`GPIOC_ODR`, the GPIOC output data register.
-
-Code:
+The app toggles PC13 by XORing bit 13 in the output data register:
 
 ```c
 GPIOC_ODR ^= GPIO_PIN(LED_PIN);
 ```
 
-Register details:
+For an active-low LED:
 
-| Item | Value |
+| PC13 level | LED state |
 | --- | --- |
-| Register | `GPIOC_ODR` |
-| Address | `0x4001100C` |
-| Bit used | bit 13 |
-| Mask | `0x00002000` |
-| Operation | XOR assignment, `^=` |
+| Low | On |
+| High | Off |
 
-XOR toggles the selected bit:
+The GPIO reference page also summarizes the safer set/reset register, `BSRR`, in
+[Registers You Use Most](../gpio.md#registers-you-use-most).
 
-| Previous bit 13 | New bit 13 | PC13 level | LED state |
-| --- | --- | --- | --- |
-| `0` | `1` | High | Off |
-| `1` | `0` | Low | On |
+## Delay Loop
 
-Assuming `GPIOC_ODR` starts at reset value `0x00000000`, the first few toggles
-look like this:
+The delay function is just a busy-wait loop:
 
-```text
-Initial:       0x00000000  PC13 low   LED on
-First toggle:  0x00002000  PC13 high  LED off
-Second toggle: 0x00000000  PC13 low   LED on
-Third toggle:  0x00002000  PC13 high  LED off
+```c
+static void delay(volatile uint32_t count) {
+  while (count-- > 0u) {
+    __asm volatile("nop");
+  }
+}
 ```
 
-The delay function is just a busy-wait loop. It repeatedly executes `nop`, which
-does no useful work but consumes CPU cycles so the LED state remains visible
-before the next toggle.
+It repeatedly executes `nop`, which consumes CPU cycles so the LED state remains
+visible before the next toggle.
+
+This is simple and useful for a first example, but it is not an accurate timer.
+Later examples should use SysTick or a hardware timer.
