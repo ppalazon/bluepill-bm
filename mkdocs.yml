@@ -10,8 +10,9 @@ nav:
   - Build Process: build-process.md
   - Linker And Startup: linker-startup.md
   - Applications:
-      - Blink: apps/blink.md
+      - Bare Blink: apps/bare-blink.md
   - Reference:
+      - CMSIS: cmsis.md
       - Acronyms: acronyms.md
       - PDFs:
           - CKS32F103x Datasheet: refs/CKS32F103x.pdf

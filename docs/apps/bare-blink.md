@@ -1,4 +1,4 @@
-# Blink Application
+# Bare Blink Application
 
 It blinks the board LED connected to PC13, which means Port C pin 13. On most
 Blue Pill boards this LED is active-low: driving PC13 low turns the LED on, and

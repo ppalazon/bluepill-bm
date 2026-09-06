@@ -1,4 +1,4 @@
-APP ?= blink
+APP ?= bare-blink
 PROJECT := bluepill-$(APP)
 
 BUILD_DIR := build

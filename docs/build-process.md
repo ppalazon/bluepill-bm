@@ -4,13 +4,13 @@ This project builds a bare-metal executable for an STM32F103C8T6 Blue Pill board
 The final program runs directly on a Cortex-M3 microcontroller, not on the host
 computer, so the build uses an ARM cross-compilation toolchain.
 
-The default application is `blink`, so a normal build creates these files:
+The default application is `bare-blink`, so a normal build creates these files:
 
 ```text
-build/bluepill-blink.elf
-build/bluepill-blink.bin
-build/bluepill-blink.hex
-build/bluepill-blink.map
+build/bluepill-bare-blink.elf
+build/bluepill-bare-blink.bin
+build/bluepill-bare-blink.hex
+build/bluepill-bare-blink.map
 ```
 
 The most important output is the ELF file. It contains the machine code, debug
@@ -57,12 +57,12 @@ arm-none-eabi-readelf  inspect ELF headers, sections, and program headers
 The default application is selected here:
 
 ```make
-APP ?= blink
+APP ?= bare-blink
 PROJECT := bluepill-$(APP)
 ```
 
-If no `APP` is passed, `blink` is used. The project name becomes
-`bluepill-blink`.
+If no `APP` is passed, `bare-blink` is used. The project name becomes
+`bluepill-bare-blink`.
 
 The source directories are:
 
@@ -85,11 +85,11 @@ the C file `src/startup_stm32f103.c`:
 ASM_SOURCES :=
 ```
 
-For `APP=blink`, the important inputs are:
+For `APP=bare-blink`, the important inputs are:
 
 ```text
 src/*.c
-apps/blink/*.c
+apps/bare-blink/*.c
 linker/STM32F103C8TX_FLASH.ld
 ```
 
@@ -209,14 +209,14 @@ program size.
 ### 1. Preprocessing
 
 The preprocessor expands `#include`, `#define`, conditional compilation, and
-macros. For example, in `apps/blink/main.c`, register helper macros are expanded
+macros. For example, in `apps/bare-blink/main.c`, register helper macros are expanded
 from `include/stm32f103c8t6.h`.
 
 The `Makefile` does not keep the preprocessed file by default, but you can create
 one manually:
 
 ```sh
-arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -std=c11 -Iinclude -E apps/blink/main.c -o build/main.i
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -std=c11 -Iinclude -E apps/bare-blink/main.c -o build/main.i
 ```
 
 The `.i` file is C after preprocessing, before compilation.
@@ -229,7 +229,7 @@ The `Makefile` normally compiles and assembles in one command with `-c`, but you
 can stop after assembly manually:
 
 ```sh
-arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -Werror -ffunction-sections -fdata-sections -g3 -O0 -std=c11 -Iinclude -S apps/blink/main.c -o build/main.s
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -Werror -ffunction-sections -fdata-sections -g3 -O0 -std=c11 -Iinclude -S apps/bare-blink/main.c -o build/main.s
 ```
 
 The `.s` file is ARM Thumb assembly text.
@@ -247,7 +247,7 @@ $(BUILD_DIR)/%.o: %.c
 For example:
 
 ```text
-apps/blink/main.c -> build/apps/blink/main.o
+apps/bare-blink/main.c -> build/apps/bare-blink/main.o
 src/system_stm32f103.c -> build/src/system_stm32f103.o
 ```
 
@@ -295,7 +295,7 @@ This project provides its own Cortex-M startup file in `src/startup_stm32f103.c`
 `-Wl,--gc-sections` passes `--gc-sections` to the linker. It removes unused input
 sections. This works well with `-ffunction-sections` and `-fdata-sections`.
 
-`-Wl,-Map=build/bluepill-blink.map` asks the linker to write a map file. The map
+`-Wl,-Map=build/bluepill-bare-blink.map` asks the linker to write a map file. The map
 file shows which object files and sections were placed into the final memory
 layout.
 
@@ -360,7 +360,7 @@ At reset, `Reset_Handler` sets the stack pointer, calls `SystemInit`, copies
 The linked ELF is:
 
 ```text
-build/bluepill-blink.elf
+build/bluepill-bare-blink.elf
 ```
 
 Use the ELF for debugging and for OpenOCD flashing. It contains more information
@@ -378,7 +378,7 @@ $(BIN): $(ELF)
 This produces:
 
 ```text
-build/bluepill-blink.bin
+build/bluepill-bare-blink.bin
 ```
 
 The binary is just the loadable bytes, without ELF metadata or debug symbols.
@@ -393,7 +393,7 @@ $(HEX): $(ELF)
 This produces:
 
 ```text
-build/bluepill-blink.hex
+build/bluepill-bare-blink.hex
 ```
 
 HEX is a text format that includes addresses and checksums. Some flashing tools
@@ -410,7 +410,7 @@ $(SIZE) $<
 Manual command:
 
 ```sh
-arm-none-eabi-size build/bluepill-blink.elf
+arm-none-eabi-size build/bluepill-bare-blink.elf
 ```
 
 Typical output has these columns:
@@ -438,14 +438,14 @@ make
 List symbols in the ELF:
 
 ```sh
-arm-none-eabi-nm build/bluepill-blink.elf
+arm-none-eabi-nm build/bluepill-bare-blink.elf
 ```
 
 Useful variants:
 
 ```sh
-arm-none-eabi-nm -n build/bluepill-blink.elf
-arm-none-eabi-nm -S --size-sort build/bluepill-blink.elf
+arm-none-eabi-nm -n build/bluepill-bare-blink.elf
+arm-none-eabi-nm -S --size-sort build/bluepill-bare-blink.elf
 ```
 
 `-n` sorts symbols by address. `-S --size-sort` shows symbol sizes and sorts by
@@ -454,28 +454,28 @@ size.
 Disassemble executable code:
 
 ```sh
-arm-none-eabi-objdump -d build/bluepill-blink.elf
+arm-none-eabi-objdump -d build/bluepill-bare-blink.elf
 ```
 
 Disassemble with source mixed in:
 
 ```sh
-arm-none-eabi-objdump -d -S build/bluepill-blink.elf
+arm-none-eabi-objdump -d -S build/bluepill-bare-blink.elf
 ```
 
 Show section headers:
 
 ```sh
-arm-none-eabi-objdump -h build/bluepill-blink.elf
+arm-none-eabi-objdump -h build/bluepill-bare-blink.elf
 ```
 
 Read ELF headers and metadata:
 
 ```sh
-arm-none-eabi-readelf -h build/bluepill-blink.elf
-arm-none-eabi-readelf -S build/bluepill-blink.elf
-arm-none-eabi-readelf -l build/bluepill-blink.elf
-arm-none-eabi-readelf -a build/bluepill-blink.elf
+arm-none-eabi-readelf -h build/bluepill-bare-blink.elf
+arm-none-eabi-readelf -S build/bluepill-bare-blink.elf
+arm-none-eabi-readelf -l build/bluepill-bare-blink.elf
+arm-none-eabi-readelf -a build/bluepill-bare-blink.elf
 ```
 
 `-h` shows the ELF header.
@@ -489,7 +489,7 @@ arm-none-eabi-readelf -a build/bluepill-blink.elf
 Inspect the linker map:
 
 ```sh
-less build/bluepill-blink.map
+less build/bluepill-bare-blink.map
 ```
 
 The map file is often the best place to answer these questions:
@@ -510,7 +510,7 @@ make
 Build the blink app explicitly:
 
 ```sh
-make APP=blink
+make APP=bare-blink
 ```
 
 Clean generated files:
@@ -537,7 +537,7 @@ flash: $(ELF)
 For the default app, this expands to roughly:
 
 ```sh
-openocd -f openocd/bluepill.cfg -c "program build/bluepill-blink.elf verify reset exit"
+openocd -f openocd/bluepill.cfg -c "program build/bluepill-bare-blink.elf verify reset exit"
 ```
 
 The OpenOCD config selects the ST-Link adapter and STM32F1 target:
@@ -574,7 +574,7 @@ Do not connect 5 V to a 3.3 V pin. The STM32F103 is a 3.3 V microcontroller.
 Build the firmware:
 
 ```sh
-make APP=blink
+make APP=bare-blink
 ```
 
 Flash it with the Makefile target:
@@ -586,7 +586,7 @@ make flash
 Or run OpenOCD manually:
 
 ```sh
-openocd -f openocd/bluepill.cfg -c "program build/bluepill-blink.elf verify reset exit"
+openocd -f openocd/bluepill.cfg -c "program build/bluepill-bare-blink.elf verify reset exit"
 ```
 
 If you want to keep OpenOCD running for debugging:
@@ -598,7 +598,7 @@ make openocd
 Then connect GDB from another terminal:
 
 ```sh
-arm-none-eabi-gdb build/bluepill-blink.elf
+arm-none-eabi-gdb build/bluepill-bare-blink.elf
 ```
 
 Inside GDB:

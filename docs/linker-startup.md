@@ -97,7 +97,7 @@ RAM at runtime.
 Object files are relocatable. They contain code, data, symbols, and relocation
 records, but they do not yet have the final embedded memory layout.
 
-For example, `build/apps/blink/main.o` can contain a call to `delay`, a reference
+For example, `build/apps/bare-blink/main.o` can contain a call to `delay`, a reference
 to `GPIOC_ODR`, and a `main` symbol. The object file does not decide where
 `main` will sit in Flash.
 
@@ -612,10 +612,10 @@ Then inspect the result:
 
 ```sh
 make
-arm-none-eabi-readelf -S build/bluepill-blink.elf
-arm-none-eabi-readelf -l build/bluepill-blink.elf
-arm-none-eabi-objdump -h build/bluepill-blink.elf
-arm-none-eabi-nm -n build/bluepill-blink.elf
+arm-none-eabi-readelf -S build/bluepill-bare-blink.elf
+arm-none-eabi-readelf -l build/bluepill-bare-blink.elf
+arm-none-eabi-objdump -h build/bluepill-bare-blink.elf
+arm-none-eabi-nm -n build/bluepill-bare-blink.elf
 ```
 
 ## Why A Startup File Is Needed
@@ -963,31 +963,31 @@ make
 Check section addresses:
 
 ```sh
-arm-none-eabi-readelf -S build/bluepill-blink.elf
+arm-none-eabi-readelf -S build/bluepill-bare-blink.elf
 ```
 
 Check loadable segments and VMA/LMA behavior:
 
 ```sh
-arm-none-eabi-readelf -l build/bluepill-blink.elf
+arm-none-eabi-readelf -l build/bluepill-bare-blink.elf
 ```
 
 Disassemble startup and `main`:
 
 ```sh
-arm-none-eabi-objdump -d -S build/bluepill-blink.elf
+arm-none-eabi-objdump -d -S build/bluepill-bare-blink.elf
 ```
 
 List symbols by address:
 
 ```sh
-arm-none-eabi-nm -n build/bluepill-blink.elf
+arm-none-eabi-nm -n build/bluepill-bare-blink.elf
 ```
 
 Inspect the linker map:
 
 ```sh
-less build/bluepill-blink.map
+less build/bluepill-bare-blink.map
 ```
 
 Useful symbols to look for:

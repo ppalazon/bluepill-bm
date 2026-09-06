@@ -36,7 +36,7 @@ The project does not require STM32CubeIDE or official ST flashing tools.
 ├── Makefile
 ├── README.md
 ├── apps/
-│   └── blink/
+│   └── bare-blink/
 │       └── main.c
 ├── asm/
 │   └── startup_stm32f103c8tx.s
@@ -64,18 +64,18 @@ is ignored.
 make
 ```
 
-The default application is `blink`. To build a specific application, pass `APP`:
+The default application is `bare-blink`. To build a specific application, pass `APP`:
 
 ```sh
-make APP=blink
+make APP=bare-blink
 ```
 
 Generated outputs:
 
-- `build/bluepill-blink.elf`
-- `build/bluepill-blink.bin`
-- `build/bluepill-blink.hex`
-- `build/bluepill-blink.map`
+- `build/bluepill-bare-blink.elf`
+- `build/bluepill-bare-blink.bin`
+- `build/bluepill-bare-blink.hex`
+- `build/bluepill-bare-blink.map`
 
 Clean generated files:
 
@@ -101,7 +101,7 @@ make flash
 This uses:
 
 ```sh
-openocd -f openocd/bluepill.cfg -c "program build/bluepill-blink.elf verify reset exit"
+openocd -f openocd/bluepill.cfg -c "program build/bluepill-bare-blink.elf verify reset exit"
 ```
 
 ## Debug
@@ -154,7 +154,7 @@ value.
 
 ## Firmware
 
-`apps/blink/main.c` is a direct-register LED blink.
+`apps/bare-blink/main.c` is a direct-register LED blink.
 
 It:
 
