@@ -15,6 +15,7 @@ nav:
       - Acronyms: acronyms.md
       - PDFs:
           - CKS32F103x Datasheet: refs/CKS32F103x.pdf
+          - CKS32F103x Reference Manual: refs/CKS32F103x8-reference-manual.pdf
           - STM32F103x8 Datasheet: refs/stm32f103x8-datasheet.pdf
           - STM32F103x8 Reference Manual: refs/stm32f103x8-reference.pdf
           - ARM Cortex-M3 User Guide: refs/arm-cortex-m3-generic-user-guide.pdf
