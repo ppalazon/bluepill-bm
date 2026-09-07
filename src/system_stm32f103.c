@@ -1,7 +1,6 @@
 #include "stm32f103c8t6.h"
 
-void SystemInit(void)
-{
+void SystemInit(void) {
     /*
      * Keep the internal high-speed oscillator enabled.
      * RCC_CR address: 0x40021000

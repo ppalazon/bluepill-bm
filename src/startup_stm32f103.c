@@ -12,8 +12,7 @@ void Default_Handler(void);
 void SystemInit(void);
 int main(void);
 
-#define DEFAULT_HANDLER(name)                                                  \
-  void name(void) __attribute__((weak, alias("Default_Handler")))
+#define DEFAULT_HANDLER(name) void name(void) __attribute__((weak, alias("Default_Handler")))
 
 DEFAULT_HANDLER(NMI_Handler);
 DEFAULT_HANDLER(HardFault_Handler);
@@ -132,31 +131,31 @@ const uint32_t g_pfnVectors[] __attribute__((section(".isr_vector"), used)) = {
 };
 
 void Default_Handler(void) {
-  // Engaging in an infinite loop effectively prevents the program from
-  // proceeding into an undefined state following such an event
-  while (1) {
-  }
+    // Engaging in an infinite loop effectively prevents the program from
+    // proceeding into an undefined state following such an event
+    while (1) {
+    }
 }
 
 void Reset_Handler(void) {
-  SystemInit();
+    SystemInit();
 
-  uint32_t *p_src_mem = &_sidata;
-  uint32_t *p_dest_mem = &_sdata;
+    uint32_t *p_src_mem = &_sidata;
+    uint32_t *p_dest_mem = &_sdata;
 
-  // Copy the data content from FLASH to SRAM
-  while (p_dest_mem < &_edata) {
-    *p_dest_mem++ = *p_src_mem++;
-  }
+    // Copy the data content from FLASH to SRAM
+    while (p_dest_mem < &_edata) {
+        *p_dest_mem++ = *p_src_mem++;
+    }
 
-  // Initialize to 0 all .sbss section in the SRAM
-  p_dest_mem = &_sbss;
-  while (p_dest_mem < &_ebss) {
-    *p_dest_mem++ = 0;
-  }
+    // Initialize to 0 all .sbss section in the SRAM
+    p_dest_mem = &_sbss;
+    while (p_dest_mem < &_ebss) {
+        *p_dest_mem++ = 0;
+    }
 
-  main();
+    main();
 
-  while (1) {
-  }
+    while (1) {
+    }
 }

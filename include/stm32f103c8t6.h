@@ -42,14 +42,14 @@
 #define STM32_PERIPH_BITBAND_BASE 0x40000000u
 #define STM32_PERIPH_BITBAND_ALIAS_BASE 0x42000000u
 
-#define STM32_BITBAND_ALIAS(alias_base, bitband_base, addr, bit) \
-  ((alias_base) + (((uint32_t)(addr) - (bitband_base)) * 32u) + ((uint32_t)(bit) * 4u))
+#define STM32_BITBAND_ALIAS(alias_base, bitband_base, addr, bit)                                   \
+    ((alias_base) + (((uint32_t)(addr) - (bitband_base)) * 32u) + ((uint32_t)(bit) * 4u))
 
-#define STM32_SRAM_BIT_ALIAS(addr, bit) \
-  STM32_BITBAND_ALIAS(STM32_SRAM_BITBAND_ALIAS_BASE, STM32_SRAM_BITBAND_BASE, (addr), (bit))
+#define STM32_SRAM_BIT_ALIAS(addr, bit)                                                            \
+    STM32_BITBAND_ALIAS(STM32_SRAM_BITBAND_ALIAS_BASE, STM32_SRAM_BITBAND_BASE, (addr), (bit))
 
-#define STM32_PERIPH_BIT_ALIAS(addr, bit) \
-  STM32_BITBAND_ALIAS(STM32_PERIPH_BITBAND_ALIAS_BASE, STM32_PERIPH_BITBAND_BASE, (addr), (bit))
+#define STM32_PERIPH_BIT_ALIAS(addr, bit)                                                          \
+    STM32_BITBAND_ALIAS(STM32_PERIPH_BITBAND_ALIAS_BASE, STM32_PERIPH_BITBAND_BASE, (addr), (bit))
 
 /* APB1 peripheral bases. */
 #define TIM2_BASE 0x40000000u

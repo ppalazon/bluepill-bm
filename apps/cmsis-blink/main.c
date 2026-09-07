@@ -4,18 +4,18 @@
 #define BLINK_DELAY 800000u
 
 static void delay(volatile uint32_t count) {
-  while (count-- > 0u) {
-    /* Keep the CPU busy for one instruction so the loop is not optimized away.
-     */
-    __asm volatile("nop");
-  }
+    while (count-- > 0u) {
+        /* Keep the CPU busy for one instruction so the loop is not optimized away.
+         */
+        __asm volatile("nop");
+    }
 }
 
 int main(void) {
-  board_led_init();
-  board_led_off();
-  while (1) {
-    board_led_toggle();
-    delay(BLINK_DELAY);
-  }
+    board_led_init();
+    board_led_off();
+    while (1) {
+        board_led_toggle();
+        delay(BLINK_DELAY);
+    }
 }
