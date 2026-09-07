@@ -13,7 +13,7 @@ The application does three things:
 3. Toggles PC13 forever, with a busy-wait delay between toggles.
 
 The GPIO concepts and reference manual links are summarized in
-[GPIO Peripheral](../gpio.md).
+[GPIO Peripheral](../peripherals/gpio.md).
 
 ## Code Path
 
@@ -41,7 +41,7 @@ RCC_APB2ENR |= RCC_APB2ENR_IOPCEN;
 ```
 
 The clock-enable register is summarized in
-[Registers You Use Most](../gpio.md#registers-you-use-most).
+[Registers You Use Most](../peripherals/gpio.md#registers-you-use-most).
 
 ## PC13 Configuration
 
@@ -68,7 +68,7 @@ That selects:
 | `CNF13[1:0]` | `0b00` | General-purpose push-pull output |
 
 The configuration registers and push-pull mode are summarized in
-[GPIO Peripheral](../gpio.md).
+[GPIO Peripheral](../peripherals/gpio.md).
 
 ## LED Toggle
 
@@ -86,7 +86,7 @@ For an active-low LED:
 | High | Off |
 
 The GPIO reference page also summarizes the safer set/reset register, `BSRR`, in
-[Registers You Use Most](../gpio.md#registers-you-use-most).
+[Registers You Use Most](../peripherals/gpio.md#registers-you-use-most).
 
 ## Delay Loop
 

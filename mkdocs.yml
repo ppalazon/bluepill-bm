@@ -9,10 +9,12 @@ nav:
   - Home: index.md
   - Project Workflow: project-workflow.md
   - Memory Map: stm32f103c8t6-memory-map.md
-  - GPIO Peripheral: gpio.md
-  - SysTick Timer: systick.md
-  - Build Process: build-process.md
   - Linker And Startup: linker-startup.md
+  - Build Process: build-process.md
+  - Peripherals:
+      - GPIO: peripherals/gpio.md
+      - USART: peripherals/usart.md
+      - SysTick: peripherals/systick.md
   - Applications:
       - Bare Blink: apps/bare-blink.md
   - Reference:

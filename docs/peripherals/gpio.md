@@ -85,11 +85,11 @@ Use the project-local STM32F103 reference manual for the full register details:
 
 | Topic | Direct link |
 | --- | --- |
-| GPIO and AFIO chapter start | [RM0008 page 159](refs/stm32f103x8-reference.pdf#page=159) |
-| GPIO port structure and modes | [RM0008 page 160](refs/stm32f103x8-reference.pdf#page=160) |
-| GPIO mode table | [RM0008 page 161](refs/stm32f103x8-reference.pdf#page=161) |
-| Input, output, alternate, and analog behavior | [RM0008 page 163](refs/stm32f103x8-reference.pdf#page=163) |
-| GPIO registers: `CRL`, `CRH`, `IDR`, `ODR`, `BSRR` | [RM0008 page 171](refs/stm32f103x8-reference.pdf#page=171) |
-| `RCC_APB2ENR`: GPIO and AFIO clock enables | [RM0008 page 112](refs/stm32f103x8-reference.pdf#page=112) |
-| AFIO remapping overview | [RM0008 page 175](refs/stm32f103x8-reference.pdf#page=175) |
-| `AFIO_MAPR` register | [RM0008 page 184](refs/stm32f103x8-reference.pdf#page=184) |
+| GPIO and AFIO chapter start | [RM0008 page 159](../refs/stm32f103x8-reference.pdf#page=159) |
+| GPIO port structure and modes | [RM0008 page 160](../refs/stm32f103x8-reference.pdf#page=160) |
+| GPIO mode table | [RM0008 page 161](../refs/stm32f103x8-reference.pdf#page=161) |
+| Input, output, alternate, and analog behavior | [RM0008 page 163](../refs/stm32f103x8-reference.pdf#page=163) |
+| GPIO registers: `CRL`, `CRH`, `IDR`, `ODR`, `BSRR` | [RM0008 page 171](../refs/stm32f103x8-reference.pdf#page=171) |
+| `RCC_APB2ENR`: GPIO and AFIO clock enables | [RM0008 page 112](../refs/stm32f103x8-reference.pdf#page=112) |
+| AFIO remapping overview | [RM0008 page 175](../refs/stm32f103x8-reference.pdf#page=175) |
+| `AFIO_MAPR` register | [RM0008 page 184](../refs/stm32f103x8-reference.pdf#page=184) |

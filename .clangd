@@ -5,3 +5,6 @@ CompileFlags:
     - arm-none-eabi
     - -mcpu=cortex-m3
     - -mthumb
+
+Format:
+  Style: file

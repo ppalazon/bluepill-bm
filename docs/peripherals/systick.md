@@ -96,9 +96,9 @@ details:
 
 | Topic | Direct link |
 | --- | --- |
-| Clock tree and SysTick clock source note | [RM0008 page 93](refs/stm32f103x8-reference.pdf#page=93) |
-| SysTick calibration value | [RM0008 page 197](refs/stm32f103x8-reference.pdf#page=197) |
-| SysTick vector-table entry | [RM0008 page 204](refs/stm32f103x8-reference.pdf#page=204) |
+| Clock tree and SysTick clock source note | [RM0008 page 93](../refs/stm32f103x8-reference.pdf#page=93) |
+| SysTick calibration value | [RM0008 page 197](../refs/stm32f103x8-reference.pdf#page=197) |
+| SysTick vector-table entry | [RM0008 page 204](../refs/stm32f103x8-reference.pdf#page=204) |
 
 RM0008 describes the STM32 clock connection, calibration value, and exception
 vector. The full bit-level definition of `STK_CTRL`, `STK_LOAD`, `STK_VAL`, and
