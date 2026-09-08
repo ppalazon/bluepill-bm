@@ -1,6 +1,7 @@
 # STM32F103C8T6 Acronyms
 
-This list covers the main acronyms used in `docs/stm32f103c8t6-memory-map.md` and `include/stm32f103c8t6.h`.
+This list covers the main acronyms used throughout the project documentation and
+local STM32 headers.
 
 ## Bus And Address Space
 
@@ -39,6 +40,7 @@ These terms belong to the ARM Cortex-M3 core itself, especially interrupts, syst
 | `STIR` | Software Trigger Interrupt Register | Cortex-M register used to trigger interrupts in software |
 | `SWD` | Serial Wire Debug | ARM two-pin debug interface |
 | `SWJ` | Serial Wire/JTAG | Debug port configuration covering SWD and JTAG pins |
+| `JTAG` | Joint Test Action Group | ARM debug interface sharing some GPIO pins with alternate functions |
 | `SysTick` | System Tick Timer | Cortex-M 24-bit timer commonly used for OS ticks or delays |
 
 ## STM32 Peripherals
@@ -65,6 +67,54 @@ These are hardware blocks provided by the STM32F103 around the Cortex-M3 CPU.
 | `USART` | Universal Synchronous/Asynchronous Receiver/Transmitter | Serial communication peripheral |
 | `USB` | Universal Serial Bus | USB full-speed device peripheral |
 | `WWDG` | Window Watchdog | Watchdog that must be refreshed inside a timing window |
+
+## Timer Peripheral Terms
+
+These terms are used by the STM32F103C8T6 timer peripherals and their
+registers.
+
+| Acronym | Meaning | Context |
+|---|---|---|
+| `ARR` | Auto-Reload Register | Holds the terminal count that produces an update event |
+| `ARPE` | Auto-Reload Preload Enable | `CR1` bit that buffers `ARR` until an update event |
+| `BDTR` | Break and Dead-Time Register | TIM1 register for break, dead-time, and output safety control |
+| `BKIN` | Break Input | TIM1 safety input that can disable timer outputs |
+| `CC` | Capture/Compare | Timer channel function for measuring an input or acting on a count match |
+| `CCER` | Capture/Compare Enable Register | Enables channels and selects capture edge or output polarity |
+| `CCMR` | Capture/Compare Mode Register | Selects input capture, output compare, or PWM mode |
+| `CCR` | Capture/Compare Register | Stores a captured count or an output compare threshold |
+| `CHx` | Timer channel x | One of the timer's numbered capture/compare channels |
+| `CHxN` | Complementary output of timer channel x | TIM1 complementary output for channels 1 through 3 |
+| `CEN` | Counter Enable | `CR1` bit that starts the timer counter |
+| `CNT` | Counter Register | Holds the current timer count |
+| `DIER` | DMA/Interrupt Enable Register | Enables timer interrupt and DMA request sources |
+| `DTG` | Dead-Time Generator | `BDTR` field that delays complementary TIM1 output transitions |
+| `EGR` | Event Generation Register | Generates update, capture/compare, or trigger events in software |
+| `ETR` | External Trigger | Dedicated external timer trigger input |
+| `HSI` | High-Speed Internal oscillator | Default 8 MHz system clock source in this project |
+| `IC` | Input Capture | Captures `CNT` on a selected input edge |
+| `ITR` | Internal Trigger | Internal timer-to-timer trigger connection |
+| `MMS` | Master Mode Selection | `CR2` field selecting the timer master trigger output |
+| `MOE` | Main Output Enable | TIM1 `BDTR` bit that permits outputs to drive their pins |
+| `OC` | Output Compare | Changes or reports an output when `CNT` matches `CCR` |
+| `OPM` | One-Pulse Mode | `CR1` bit that stops the timer after its next update event |
+| `PCLK` | APB Peripheral Clock | APB clock feeding a peripheral; timer clock can be twice this value |
+| `PSC` | Prescaler Register | Divides the timer input clock by `PSC + 1` |
+| `PWM` | Pulse-Width Modulation | Timer output whose duty cycle is selected by a capture/compare register |
+| `RCR` | Repetition Counter Register | TIM1 register that delays update events by a programmed number of cycles |
+| `SMS` | Slave Mode Selection | `SMCR` field selecting synchronization, encoder, or external-clock mode |
+| `SMCR` | Slave Mode Control Register | Selects timer trigger source and slave behavior |
+| `SR` | Status Register | Timer register containing update, trigger, and capture/compare flags |
+| `TI` | Timer Input | Internal name for a timer channel input, such as TI1 or TI2 |
+| `TRGO` | Trigger Output | Timer event routed internally to synchronize or trigger another peripheral |
+| `TS` | Trigger Selection | `SMCR` field selecting the timer trigger input |
+| `UDE` | Update DMA Enable | `DIER` bit enabling DMA requests on update events |
+| `UDIS` | Update Disable | `CR1` bit that suppresses update events and shadow-register transfers |
+| `UEV` | Update Event | Timer overflow, underflow, trigger, or software event that updates buffered registers |
+| `UG` | Update Generation | `EGR` bit that forces an update event in software |
+| `UIE` | Update Interrupt Enable | `DIER` bit enabling interrupts on update events |
+| `UIF` | Update Interrupt Flag | `SR` flag set when an update event occurs |
+| `URS` | Update Request Source | `CR1` bit limiting update interrupt requests to counter overflow or underflow |
 
 ## RCC Registers And Bits
 
