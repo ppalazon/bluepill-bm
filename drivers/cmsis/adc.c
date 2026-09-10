@@ -1,56 +1,106 @@
 #include "adc.h"
-#include "stm32f103xb.h"
 #include <stdint.h>
 
-void pb0_adc_init(void) {
-    // Enable GPIOB to enable ADC channel 8 and 9
-    RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
+static void adc_startup_delay(void) {
+    /* Allow the ADC and internal sensor to settle at the current 8 MHz clock. */
+    for (volatile uint32_t count = 0u; count < 1000u; ++count) {
+        __asm volatile("nop");
+    }
+}
 
-    // Set pins PB0 (ADC8) as input analog (CNF: 00 and MODE: 00)
-    GPIOB->CRL &= ~(GPIO_CRL_CNF0 | GPIO_CRL_MODE0);
-
-    // Enable ADC module in the APB2 bus
+static void adc1_clock_init(void) {
     RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
 
-    // Set conversion sequence start with channel 8 (3bit enable 0x8)
-    ADC1->SQR3 &= ~(ADC_SQR3_SQ1);
-    ADC1->SQR3 |= ADC_SQR3_SQ1_3;
+    /* PCLK2 is 8 MHz in this project. Keep ADCCLK below 14 MHz. */
+    RCC->CFGR &= ~RCC_CFGR_ADCPRE;
+    RCC->CFGR |= RCC_CFGR_ADCPRE_DIV2;
+}
 
-    // Set conversion sequence length (Set 0 to make 1 conversion)
-    ADC1->SQR1 &= ~(ADC_SQR1_L);
+void pb0_adc_init(void) {
+    /* Enable GPIOB for ADC channel 8. */
+    RCC->APB2ENR |= RCC_APB2ENR_IOPBEN;
 
-    // Enable ADC module
-    ADC1->CR2 |= ADC_CR2_ADON;
+    /* Set PB0 to analog input mode. */
+    GPIOB->CRL &= ~(GPIO_CRL_CNF0 | GPIO_CRL_MODE0);
+
+    adc1_clock_init();
+
+    /* Select channel 8 as the first regular conversion. */
+    ADC1->SQR3 = (8u << ADC_SQR3_SQ1_Pos);
+
+    /* Set the regular sequence length to one conversion. */
+    ADC1->SQR1 = 0u;
+
+    /* Use a long sample time for a simple external sensor. */
+    ADC1->SMPR2 = ADC_SMPR2_SMP8;
+
+    /* Select software start and enable the ADC. */
+    ADC1->CR2 = ADC_CR2_EXTSEL | ADC_CR2_EXTTRIG | ADC_CR2_ADON;
+    adc_startup_delay();
+
+    calibration();
+}
+
+void adc1_temperature_init(void) {
+    adc1_clock_init();
+
+    /* Select the internal temperature sensor on ADC1 channel 16. */
+    ADC1->CR1 = 0u;
+    ADC1->SQR1 = 0u;
+    ADC1->SQR2 = 0u;
+    ADC1->SQR3 = (16u << ADC_SQR3_SQ1_Pos);
+
+    /* 239.5 ADC cycles gives the sensor time to settle. */
+    ADC1->SMPR1 = ADC_SMPR1_SMP16 | ADC_SMPR1_SMP17;
+
+    /* TSVREFE enables the internal temperature sensor and VREFINT path. */
+    ADC1->CR2 = ADC_CR2_EXTSEL | ADC_CR2_EXTTRIG | ADC_CR2_TSVREFE | ADC_CR2_ADON;
+    adc_startup_delay();
+
+    calibration();
 }
 
 void calibration(void) {
-    // Reset calibration
     ADC1->CR2 |= ADC_CR2_RSTCAL;
-
-    // Wait until finishes calibration
-    while (ADC1->CR2 & ADC_CR2_RSTCAL) {
+    while ((ADC1->CR2 & ADC_CR2_RSTCAL) != 0u) {
     }
 
-    // Initialize calibration
     ADC1->CR2 |= ADC_CR2_CAL;
-
-    /* Wait until ADC is calibrated */
-    while (ADC1->CR2 & ADC_CR2_CAL) {
+    while ((ADC1->CR2 & ADC_CR2_CAL) != 0u) {
     }
 }
 
 void start_conversion(void) {
-    // Software trigger with EXTSEL=111
-    // Continous conversion
-    // Trigger software start
-    ADC1->CR2 |= (ADC_CR2_CONT | ADC_CR2_SWSTART | ADC_CR2_EXTSEL | ADC_CR2_EXTTRIG);
+    /* Software trigger with EXTSEL=111. Keep continuous mode for PB0. */
+    ADC1->CR2 |= ADC_CR2_CONT | ADC_CR2_EXTTRIG | ADC_CR2_SWSTART;
 }
 
 uint32_t adc_read(void) {
-    // Wait for conversion to be complete
-    while (!(ADC1->SR & ADC_SR_EOC)) {
+    while ((ADC1->SR & ADC_SR_EOC) == 0u) {
     }
 
-    /* Read converted value, getting 16 LSB */
-    return (ADC1->DR & 0xFFFF);
+    return ADC1->DR & 0x0FFFu;
+}
+
+static uint32_t adc1_internal_read_raw(uint32_t channel) {
+    ADC1->SQR3 = channel << ADC_SQR3_SQ1_Pos;
+    ADC1->CR2 &= ~ADC_CR2_CONT;
+    ADC1->CR2 |= ADC_CR2_ADON;
+    ADC1->SR &= ~ADC_SR_EOC;
+    ADC1->CR2 |= ADC_CR2_SWSTART;
+
+    while ((ADC1->SR & ADC_SR_EOC) == 0u) {
+    }
+
+    return ADC1->DR & 0x0FFFu;
+}
+
+uint32_t adc1_temperature_read_raw(void) {
+    /* The temperature sensor is ADC1 channel 16. */
+    return adc1_internal_read_raw(16u);
+}
+
+uint32_t adc1_vrefint_read_raw(void) {
+    /* VREFINT is ADC1 channel 17. */
+    return adc1_internal_read_raw(17u);
 }

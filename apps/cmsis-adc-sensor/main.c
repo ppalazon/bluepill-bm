@@ -13,9 +13,6 @@ int main(void) {
     uart_init();
     pb0_adc_init();
 
-    // ADC calibration
-    calibration();
-
     // Turn off the board led;
     board_led_off();
 
