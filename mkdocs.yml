@@ -13,6 +13,7 @@ nav:
   - Build Process: build-process.md
   - Peripherals:
       - GPIO: peripherals/gpio.md
+      - Pinout: peripherals/pinout.md
       - Timers: peripherals/timers.md
       - USART: peripherals/usart.md
       - SysTick: peripherals/systick.md
