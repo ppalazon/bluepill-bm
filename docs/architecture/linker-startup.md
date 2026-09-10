@@ -1,4 +1,4 @@
-# Linker Script And Startup File
+# Linker script and startup file
 
 This document explains how the linker script and startup file work together to
 turn object files into firmware that can boot on an STM32F103C8T6 Blue Pill.
@@ -7,12 +7,12 @@ The linker script decides where every output section lives in memory. The startu
 file contains the first code that runs after reset and prepares RAM before
 calling `main`.
 
-## Understanding Load Memory On STM32F103C8T6
+## Understanding load memory on STM32F103C8T6
 
 The STM32F103C8T6 has one Cortex-M3 address space, but not every address points
 to the same kind of memory.
 
-For this project, the important regions are documented in the [Memory Map](stm32f103c8t6-memory-map.md):
+For this project, the important regions are documented in the [memory map](../targets/stm32f103c8t6/memory-map.md):
 
 | Region         |                 Address range |                Size | Used for                                                             |
 | -------------- | ----------------------------: | ------------------: | -------------------------------------------------------------------- |
@@ -37,7 +37,7 @@ The Cortex-M3 initially reads the vector table from address `0x00000000`. Becaus
 Flash is aliased there in normal boot mode, the vector table stored at
 `0x08000000` is also visible at `0x00000000` during reset.
 
-## What Lives Where
+## What lives where
 
 A small bare-metal firmware usually has these sections:
 
@@ -54,7 +54,7 @@ A small bare-metal firmware usually has these sections:
 This is the reason `.data` is special: it has two addresses. It runs from RAM,
 but its initial bytes are stored in Flash.
 
-## VMA And LMA
+## VMA and LMA
 
 GNU ld uses two address concepts for sections.
 
@@ -92,7 +92,7 @@ instead.
 ELF stores the initial bytes in Flash and records that the section must live in
 RAM at runtime.
 
-## Why A Linker Script Is Needed
+## Why a linker script is needed
 
 Object files are relocatable. They contain code, data, symbols, and relocation
 records, but they do not yet have the final embedded memory layout.
@@ -111,10 +111,10 @@ FLASH (rx)  : ORIGIN = 0x08000000, LENGTH = 64K
 RAM   (xrw) : ORIGIN = 0x20000000, LENGTH = 20K
 ```
 
-Without this information, the linker would not know that code belongs at
-`0x08000000` and writable data belongs at `0x20000000`.
+Without this information, the linker cannot place code at `0x08000000` or
+writable data at `0x20000000`.
 
-## Current Linker Script
+## Current linker script
 
 The project linker script is:
 
@@ -158,7 +158,7 @@ _estack:    0x20005000
 
 The stack grows downward, so the initial stack pointer starts at the top of RAM.
 
-## Linker Script Directives
+## Linker script directives
 
 ### ENTRY
 
@@ -207,7 +207,7 @@ SECTIONS
 The order matters. The first output section placed in Flash starts at the Flash
 origin unless the script moves the location counter elsewhere.
 
-### The Location Counter
+### The location counter
 
 The symbol `.` is the linker location counter. It means the current output
 address inside the current section.
@@ -235,7 +235,7 @@ This reserves bytes by moving the location counter forward:
 
 `KEEP()` prevents sections from being removed by linker garbage collection.
 
-This matters because the vector table may not look referenced by normal C code:
+The vector table does not look referenced by normal C code:
 
 ```ld
 KEEP(*(.isr_vector))
@@ -253,7 +253,7 @@ that unless the script keeps it.
 .bss  : { *(.bss*) } > RAM
 ```
 
-### AT And AT > region
+### AT and AT > region
 
 `AT` controls the LMA of a section when it differs from the VMA.
 
@@ -317,7 +317,7 @@ Startup uses `_sidata` as the Flash source address when copying `.data` into RAM
 
 This keeps unnecessary metadata out of the loadable image.
 
-## Section Definitions
+## Section definitions
 
 ### .isr_vector
 
@@ -379,7 +379,7 @@ Definition:
 
 Constants do not need RAM unless code explicitly copies them there.
 
-### .ARM.extab And .ARM.exidx
+### .ARM.extab and .ARM.exidx
 
 Purpose: ARM exception unwind metadata.
 
@@ -424,7 +424,7 @@ Startup copies bytes from `_sidata` to `_sdata` until `_edata`.
 
 ### .ramfunc
 
-Purpose: code/data that should run from RAM.
+Purpose: code and data that run from RAM.
 
 Runtime location: RAM.
 
@@ -480,11 +480,11 @@ Definition:
 This does not initialize memory. It makes the linker fail if static RAM usage plus
 the reserved heap/stack minimum does not fit into the 20 KiB RAM region.
 
-## Creating A Linker Script From Scratch
+## Creating a linker script from scratch
 
 Start with the chip memory map.
 
-From `docs/stm32f103c8t6-memory-map.md`:
+From `docs/targets/stm32f103c8t6/memory-map.md`:
 
 ```text
 Embedded Flash: 0x08000000 - 0x0800FFFF, 64 KiB
@@ -598,7 +598,7 @@ PROVIDE(_end = .);
 } > RAM
 ```
 
-Discard metadata that should not be loaded:
+Discard metadata that the image does not load:
 
 ```ld
 /DISCARD/ :
@@ -618,7 +618,7 @@ arm-none-eabi-objdump -h build/bluepill-bare-blink.elf
 arm-none-eabi-nm -n build/bluepill-bare-blink.elf
 ```
 
-## Why A Startup File Is Needed
+## Why a startup file is needed
 
 There is no operating system on the STM32F103C8T6. After reset, nothing prepares
 RAM, initializes variables, or calls `main` unless the firmware provides that
@@ -652,7 +652,7 @@ The active C startup provides:
 4. `Default_Handler`.
 5. `Reset_Handler`.
 
-## Why C Startup Works Here
+## Why C startup works here
 
 Many embedded projects write startup code in assembly because startup runs before
 the normal C runtime is initialized. That is still true here, so the C startup
@@ -687,7 +687,7 @@ This approach depends on a few conditions:
 
 Those conditions are true enough for this minimal Cortex-M3 firmware.
 
-This may not be valid on other systems. Some CPUs start executing from a reset
+This is not valid on every system. Some CPUs start executing from a reset
 address without automatically setting up a stack. Some systems need assembly to
 select a CPU mode, initialize stack pointers for several modes, configure memory
 controllers, set exception state, or perform low-level ABI setup before any C
@@ -696,7 +696,7 @@ function can run. On those systems, assembly startup is not optional.
 For this project, C keeps the startup easier to read while still showing the real
 bare-metal responsibilities.
 
-## Why Cortex-M Needs A Vector Table
+## Why Cortex-M needs a vector table
 
 On reset, a Cortex-M CPU does not start by executing instruction zero. It reads
 two words from the vector table:
@@ -787,7 +787,7 @@ while (1) {
 
 Returning from `main` has nowhere useful to go in a bare-metal program.
 
-## Weak Interrupt Handlers
+## Weak interrupt handlers
 
 The active C startup gives every handler a weak default implementation with this
 macro:
@@ -816,7 +816,7 @@ void SysTick_Handler(void) {
 If no real handler exists, the vector table points to `Default_Handler`, which
 loops forever. That is safer than jumping to an undefined address.
 
-## Creating A Startup File From Scratch
+## Creating a startup file from scratch
 
 For this project, create the startup file in C unless you have a specific reason
 to write assembly.
@@ -917,7 +917,7 @@ Use `asm/startup_stm32f103c8tx.s` only as a reference to compare the same ideas 
 assembly. Do not enable it in the build unless you intentionally replace the C
 startup implementation.
 
-## Relocation During Linking And Startup
+## Relocation during linking and startup
 
 There are two related relocation ideas.
 
@@ -949,10 +949,10 @@ while (p_dest_mem < &_edata) {
 ```
 
 The linker and startup file must agree. If the linker script names a symbol
-differently, startup will fail to link. If the symbols are wrong, the program may
+differently, startup will fail to link. If the symbols are wrong, the program can
 boot with corrupted global variables.
 
-## Verifying The Result
+## Verifying the result
 
 Build the project:
 

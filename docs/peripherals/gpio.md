@@ -1,4 +1,4 @@
-# GPIO Peripheral
+# GPIO peripheral
 
 GPIO means General-Purpose Input/Output. A GPIO pin is a digital connection
 between the STM32 and an external circuit. Each pin belongs to a port, such as
@@ -9,15 +9,15 @@ The Blue Pill onboard LED is normally connected to `PC13`. It is usually
 active-low, so driving `PC13` low turns the LED on and driving it high turns the
 LED off.
 
-## Basic Idea
+## Basic idea
 
 A GPIO pin can be configured as one of these common modes:
 
 | Mode | Meaning |
 | --- | --- |
-| Input floating | The MCU reads the external voltage; nothing inside pulls it high or low. |
+| Input floating | The MCU reads the external voltage. Nothing inside pulls it high or low. |
 | Input pull-up / pull-down | The MCU weakly pulls the pin to `VDD` or `GND` when nothing else drives it. |
-| Analog | The digital input/output logic is disconnected; used for ADC or unused pins. |
+| Analog | The digital input and output logic is disconnected. Use this mode for ADC or unused pins. |
 | Output push-pull | The MCU actively drives the pin high or low. |
 | Output open-drain | The MCU can drive low, but needs a pull-up resistor for high. |
 | Alternate function | A peripheral such as USART, SPI, I2C, or TIM owns the pin. |
@@ -29,10 +29,10 @@ CNF[1:0]   configuration type
 MODE[1:0]  input/output mode or output speed
 ```
 
-Pins `0..7` are configured in `GPIOx_CRL`; pins `8..15` are configured in
+Pins `0..7` are configured in `GPIOx_CRL`. Pins `8..15` are configured in
 `GPIOx_CRH`.
 
-## Registers You Use Most
+## Registers you use most
 
 GPIO is controlled by memory-mapped registers. Writing specific bits changes how
 the hardware behaves.
@@ -44,7 +44,7 @@ the hardware behaves.
 | `GPIOx_CRH` | Configures pins `8..15` of one GPIO port. |
 | `GPIOx_IDR` | Reads the current input level on the pins. |
 | `GPIOx_ODR` | Stores the output value for the pins. |
-| `GPIOx_BSRR` | Atomically sets or resets output bits; safer than read-modify-write on `ODR`. |
+| `GPIOx_BSRR` | Atomically sets or resets output bits. This is safer than read-modify-write on `ODR`. |
 | `AFIO_MAPR` | Remaps some peripheral functions to alternate pins. |
 
 For example, configuring and driving the Blue Pill LED uses three ideas:
@@ -59,7 +59,7 @@ GPIOC->BSRR = GPIO_BSRR_BR13;        /* LED on: PC13 low. */
 GPIOC->BSRR = GPIO_BSRR_BS13;        /* LED off: PC13 high. */
 ```
 
-## External Connections
+## External connections
 
 GPIO pins are not just software bits. They are electrical connections, so the
 external circuit matters.
@@ -79,7 +79,7 @@ the other drives low, they fight electrically and can damage the devices.
 Also check the STM32 datasheet for pin limits, 5 V tolerance, maximum current,
 and which alternate functions are available on each physical package pin.
 
-## Reference Manual Pages
+## Reference manual pages
 
 Use the project-local STM32F103 reference manual for the full register details:
 

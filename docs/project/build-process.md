@@ -1,4 +1,4 @@
-# Build Process
+# Build process
 
 This project builds a bare-metal executable for an STM32F103C8T6 Blue Pill board.
 The final program runs directly on a Cortex-M3 microcontroller, not on the host
@@ -52,7 +52,7 @@ arm-none-eabi-objdump  inspect sections and disassemble code
 arm-none-eabi-readelf  inspect ELF headers, sections, and program headers
 ```
 
-## Source Selection
+## Source selection
 
 The default application is selected here:
 
@@ -101,7 +101,7 @@ $(error Unknown APP '$(APP)': expected directory $(APP_DIR))
 endif
 ```
 
-## Architecture Flags
+## Architecture flags
 
 The architecture flags are:
 
@@ -113,16 +113,16 @@ CPU_FLAGS := -mcpu=cortex-m3 -mthumb
 The STM32F103C8T6 contains a Cortex-M3 core, so this must match the actual chip.
 
 `-mthumb` tells GCC to generate Thumb instructions. Cortex-M microcontrollers run
-Thumb code, not the older ARM instruction set. For Cortex-M3, this is not an
-optional performance choice; it is the instruction set the core executes.
+Thumb code, not the older ARM instruction set. Cortex-M3 executes this instruction
+set. It is not an optional performance choice.
 
 These flags are used during both compilation and linking. That keeps object files
 and linked startup/runtime code compatible with the target CPU.
 
-If these flags are wrong, the program may fail to link, contain instructions the
-CPU cannot execute, or crash immediately after reset.
+If these flags are wrong, the program can fail to link. It can also contain
+instructions that the CPU cannot execute or crash immediately after reset.
 
-## Common Compile Flags
+## Common compile flags
 
 The common flags are:
 
@@ -151,12 +151,12 @@ That matters on small microcontrollers because flash and RAM are limited.
 `-g3` includes debug information, including extra macro information. This makes
 GDB source-level debugging better.
 
-`-O0` disables optimization. This is chosen for learning and debugging because
-the generated code follows the C source more closely. With optimization enabled,
-variables may disappear, lines may be reordered, and stepping in GDB can be more
-confusing.
+`-O0` disables optimization. The project uses it for learning and debugging
+because the generated code follows the C source more closely. With optimization
+enabled, variables can disappear and lines can be reordered. Stepping in GDB can
+then become more confusing.
 
-## C Compile Flags
+## C compile flags
 
 C files use:
 
@@ -185,7 +185,7 @@ endif
 This keeps `bare-*` applications limited to the local `include/` directory while
 allowing future `cmsis-*` applications to use vendored STM32CubeF1 CMSIS headers.
 
-## Assembly Flags
+## Assembly flags
 
 Assembly files use:
 
@@ -193,9 +193,8 @@ Assembly files use:
 ASFLAGS := $(COMMON_FLAGS) -x assembler-with-cpp
 ```
 
-`-x assembler-with-cpp` tells GCC to treat the input as assembly that should pass
-through the C preprocessor first. This is useful for startup files because they
-can use preprocessor features later if needed.
+`-x assembler-with-cpp` tells GCC to treat the input as assembly that must pass
+through the C preprocessor first. Startup files can then use preprocessor features.
 
 The startup file also declares the target directly:
 
@@ -207,7 +206,7 @@ The startup file also declares the target directly:
 
 That keeps the assembly source aligned with the compiler architecture flags.
 
-## Build Stages
+## Build stages
 
 The default target is:
 
@@ -246,7 +245,7 @@ arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -Wall -Wextra -Werror -ffunction-secti
 
 The `.s` file is ARM Thumb assembly text.
 
-### 3. Assembling And Object Files
+### 3. Assembling and object files
 
 The project compiles each C file into an object file:
 
@@ -317,7 +316,7 @@ microcontrollers because it reduces code size compared with full newlib.
 `--specs=nosys.specs` supplies stub system calls for a bare-metal target. There
 is no host operating system providing calls like `open`, `read`, or `write`.
 
-### 5. Linker Script Layout
+### 5. Linker script layout
 
 The linker script starts with:
 
@@ -367,7 +366,7 @@ The startup code uses linker-provided symbols:
 At reset, `Reset_Handler` sets the stack pointer, calls `SystemInit`, copies
 `.data` from flash to RAM, clears `.bss`, then calls `main`.
 
-### 6. ELF Output
+### 6. ELF output
 
 The linked ELF is:
 
@@ -378,7 +377,7 @@ build/bluepill-bare-blink.elf
 Use the ELF for debugging and for OpenOCD flashing. It contains more information
 than the raw `.bin` or `.hex` files.
 
-### 7. Binary And HEX Outputs
+### 7. Binary and HEX outputs
 
 The raw binary is created with:
 
@@ -411,7 +410,7 @@ build/bluepill-bare-blink.hex
 HEX is a text format that includes addresses and checksums. Some flashing tools
 prefer HEX instead of ELF or BIN.
 
-### 8. Size Report
+### 8. Size report
 
 The `size` target runs:
 
@@ -439,7 +438,7 @@ for its initial values.
 `bss` is zero-initialized data that occupies RAM but does not consume flash image
 space for initial values.
 
-## Inspecting Build Outputs
+## Inspecting build outputs
 
 Build first:
 
@@ -511,7 +510,7 @@ The map file is often the best place to answer these questions:
 3. How much flash/RAM does this section use?
 4. Where did the linker place this section in memory?
 
-## Build Commands
+## Build commands
 
 Build the default app:
 
@@ -537,7 +536,7 @@ Print the size again:
 make size
 ```
 
-## Flashing With OpenOCD
+## Flashing with OpenOCD
 
 The `flash` target is:
 
@@ -570,7 +569,7 @@ The `program` command writes the ELF loadable sections to flash.
 
 `exit` closes OpenOCD when flashing is complete.
 
-## Manual Flashing Steps
+## Manual flashing steps
 
 Connect the ST-Link to the Blue Pill using SWD:
 
@@ -622,7 +621,7 @@ break main
 continue
 ```
 
-## Common Flashing Problems
+## Common flashing problems
 
 If OpenOCD cannot find the ST-Link, check USB permissions and udev rules.
 

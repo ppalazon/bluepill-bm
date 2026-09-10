@@ -1,14 +1,17 @@
-# STM32F103C8T6 Memory Map
+# STM32F103C8T6 memory map
 
 Target device: `STM32F103C8T6` (`STM32F103x8`, medium-density, 64 KiB Flash, 20 KiB SRAM).
 
 Sources:
 
-- `docs/6a2-stm32f103x8-datasheet.pdf`, section 4, Figure 11, "Memory map"
-- `docs/6a1-stm32f103x8-reference.pdf`, section 3, "Memory and bus architecture"
-- `docs/6a3-arm-cortex-m3-generic-user-guide.pdf`, section 2.2, "Memory model", and section 4.1, "Core peripheral register regions"
+- [STM32F103x8 datasheet](../../refs/stm32f103x8-datasheet.pdf), section 4,
+  Figure 11, "Memory map"
+- [STM32F103x8 reference manual](../../refs/stm32f103x8-reference.pdf), section
+  3, "Memory and bus architecture"
+- [ARM Cortex-M3 Generic User Guide](../../refs/arm-cortex-m3-generic-user-guide.pdf),
+  sections 2.2 and 4.1
 
-## Top-Level Cortex-M3 Address Space
+## Top-level Cortex-M3 address space
 
 The Cortex-M3 exposes one linear 4 GiB address space.
 
@@ -22,7 +25,7 @@ The Cortex-M3 exposes one linear 4 GiB address space.
 | `0xE000_0000` - `0xE00F_FFFF` | 1 MiB | Private Peripheral Bus | Cortex-M3 core peripherals: NVIC, SysTick, SCB, debug |
 | `0xE010_0000` - `0xFFFF_FFFF` | 511 MiB | Vendor/system | Reserved on this device unless documented otherwise |
 
-## On-Chip Memories
+## On-chip memories
 
 | Address range | Size | Region | Notes |
 |---|---:|---|---|
@@ -32,9 +35,9 @@ The Cortex-M3 exposes one linear 4 GiB address space.
 | `0x1FFF_F7E0` - `0x1FFF_F7E1` | 16 bits | Flash size register | Contains Flash size in KiB; expected `0x0040` for 64 KiB devices |
 | `0x1FFF_F7E8` - `0x1FFF_F7F3` | 96 bits | Unique device ID | Factory-programmed unique ID |
 | `0x1FFF_F800` - `0x1FFF_F80F` | 16 bytes | Option bytes | Flash protection and boot/configuration options |
-| `0x2000_0000` - `0x2000_4FFF` | 20 KiB | Embedded SRAM | Read/write SRAM, zero wait states at CPU clock speed |
+| `0x2000_0000` - `0x2000_4FFF` | 20 KiB | Embedded SRAM | Read/write SRAM. It has zero wait states at CPU clock speed. |
 
-## Boot Alias
+## Boot alias
 
 After reset, address `0x0000_0000` is mapped according to the boot pin configuration. The vector table is fetched from this alias region.
 
@@ -56,9 +59,11 @@ Jumper configuration by boot mode:
 
 `BOOT1` is a don't-care value when `BOOT0=0`: both `BOOT1=0, BOOT0=0` and `BOOT1=1, BOOT0=0` boot from main Flash.
 
-The BOOT pin values are latched shortly after reset, so change the jumpers first and then reset or power-cycle the board. For normal development, leave `BOOT0=0`; set `BOOT0=1, BOOT1=0` only when you want the built-in ST bootloader.
+The BOOT pin values are latched shortly after reset. Change the jumpers before you
+reset or power-cycle the board. For normal development, leave `BOOT0=0`. Set
+`BOOT0=1, BOOT1=0` only when you want the built-in ST bootloader.
 
-## Bit-Band Regions
+## Bit-band regions
 
 Cortex-M3 bit-banding maps each bit in a 1 MiB source region to a 32-bit word in a 32 MiB alias region.
 
@@ -77,11 +82,11 @@ alias = alias_base + (byte_offset * 32) + (bit_number * 4)
 
 Where `byte_offset = target_address - bit_band_base` and `bit_number` is `0..7`.
 
-## Peripheral Regions
+## Peripheral regions
 
 The device peripheral space starts at `0x4000_0000`. Peripheral registers are grouped by bus.
 
-### APB1 Peripherals
+### APB1 peripherals
 
 | Address range | Peripheral | Notes |
 |---|---|---|
@@ -102,7 +107,7 @@ The device peripheral space starts at `0x4000_0000`. Peripheral registers are gr
 | `0x4000_6C00` - `0x4000_6FFF` | BKP | Backup registers |
 | `0x4000_7000` - `0x4000_73FF` | PWR | Power control |
 
-### APB2 Peripherals
+### APB2 peripherals
 
 | Address range | Peripheral | Notes |
 |---|---|---|
@@ -118,7 +123,7 @@ The device peripheral space starts at `0x4000_0000`. Peripheral registers are gr
 | `0x4001_3000` - `0x4001_33FF` | SPI1 | SPI1 |
 | `0x4001_3800` - `0x4001_3BFF` | USART1 | USART1 |
 
-### AHB Peripherals
+### AHB peripherals
 
 | Address range | Peripheral | Notes |
 |---|---|---|
@@ -127,7 +132,7 @@ The device peripheral space starts at `0x4000_0000`. Peripheral registers are gr
 | `0x4002_2000` - `0x4002_23FF` | Flash memory interface | Flash access/control registers |
 | `0x4002_3000` - `0x4002_33FF` | CRC | CRC calculation unit |
 
-## Cortex-M3 Core Peripheral Registers
+## Cortex-M3 core peripheral registers
 
 These are ARM core peripherals in the Private Peripheral Bus range, not STM32 APB/AHB peripherals.
 

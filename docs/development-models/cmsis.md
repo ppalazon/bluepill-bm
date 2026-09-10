@@ -1,4 +1,4 @@
-# CMSIS Framework
+# CMSIS
 
 CMSIS means Cortex Microcontroller Software Interface Standard. It is an ARM
 software standard for Cortex-M microcontrollers.
@@ -11,7 +11,7 @@ For this project, CMSIS is useful mainly as a reference for how Cortex-M startup
 interrupt names, NVIC access, SysTick access, and device headers are normally
 organized.
 
-## Why CMSIS Exists
+## Why CMSIS exists
 
 Different microcontroller vendors use the same ARM Cortex-M CPU cores, but each
 vendor has different peripherals, register maps, startup files, and drivers.
@@ -27,7 +27,7 @@ CMSIS separates common Cortex-M concepts from vendor-specific device details:
 That makes code more portable between Cortex-M devices while still allowing each
 vendor to describe its own chip.
 
-## Key Components
+## Key components
 
 ### CMSIS-Core
 
@@ -54,7 +54,7 @@ NVIC_EnableIRQ(SysTick_IRQn);
 NVIC_SetPriority(SysTick_IRQn, 2u);
 ```
 
-On this project’s Cortex-M3 target, the central ARM-provided file would be:
+On this project’s Cortex-M3 target, the central ARM-provided file is:
 
 ```text
 core_cm3.h
@@ -154,7 +154,7 @@ instead of only:
 
 SVD files are excellent for debugging and for checking register definitions.
 
-## CMSIS Coding Rules
+## CMSIS coding rules
 
 CMSIS is designed to work across compilers and vendors, so it follows stricter
 coding rules than a small single-project header usually needs.
@@ -167,7 +167,7 @@ dialect where possible.
 The goal is that the same CMSIS-Core header can work with GCC, Arm Compiler,
 IAR, and other embedded toolchains.
 
-### Standard Integer Types
+### Standard integer types
 
 CMSIS uses fixed-width integer types from `<stdint.h>`:
 
@@ -179,13 +179,13 @@ uint8_t
 ```
 
 This matters in register programming. A peripheral register is normally 32 bits,
-so the code should say `uint32_t`, not plain `int` or `long`, because those types
-can vary between platforms.
+Use `uint32_t` for a 32-bit register. Plain `int` and `long` can vary between
+platforms.
 
 This project already follows that style in `include/stm32f103c8t6.h` and the
 startup code.
 
-### CMSIS Data Types
+### CMSIS data types
 
 CMSIS commonly defines peripheral registers through C structs containing
 `volatile` fields. A simplified example looks like this:
@@ -223,12 +223,12 @@ This project currently uses simpler register macros instead:
 Both styles access the same hardware. The struct style is the common CMSIS device
 header style. The macro style is smaller and easier to inspect while learning.
 
-### Volatile Register Access
+### Volatile register access
 
 Hardware registers must be accessed through `volatile` qualified objects.
 
-Without `volatile`, the compiler may remove or reorder reads/writes because it
-does not know that an address controls hardware.
+Without `volatile`, the compiler can remove or reorder reads and writes. It does
+not know that the address controls hardware.
 
 This project’s register helper does that:
 
@@ -236,7 +236,7 @@ This project’s register helper does that:
 #define STM32_REG32(addr) (*(volatile uint32_t *)(uintptr_t)(addr))
 ```
 
-### Compiler Abstraction
+### Compiler abstraction
 
 Different compilers spell special attributes and intrinsics differently. CMSIS
 hides those differences behind common macros.
@@ -261,7 +261,7 @@ __attribute__((weak, alias("Default_Handler")))
 That is fine for this Makefile/GCC project, but less portable than CMSIS compiler
 abstraction.
 
-### MISRA C Considerations
+### MISRA C considerations
 
 MISRA C is a set of rules for writing safer C in embedded and critical systems.
 CMSIS aims to be usable in projects that care about MISRA, but direct hardware
@@ -279,7 +279,7 @@ Common embedded deviations include:
 For a learning project, the main lesson is not to avoid these patterns. The main
 lesson is to keep them centralized, explicit, and easy to audit.
 
-## CMSIS-Core File Structure
+## CMSIS-Core file structure
 
 The CMSIS-Core structure is usually split into three groups:
 
@@ -287,15 +287,15 @@ The CMSIS-Core structure is usually split into three groups:
 2. CMSIS-Core device files from the silicon vendor.
 3. User program files from the application project.
 
-## CMSIS-Core Files
+## CMSIS-Core files
 
-![CMSIS-Core file structure](assets/img-20260906-105000.png)
+![CMSIS-Core file structure](../assets/img-20260906-105000.png)
 
 The image shows that application code does not include random low-level files
 directly. Instead, the user program includes the device header, and the device
 header includes the correct Cortex-M core header.
 
-### CMSIS-Core Standard Files
+### CMSIS-Core standard files
 
 These files come from ARM CMSIS and describe the processor core, not a specific
 STM32/CKS chip.
@@ -325,7 +325,7 @@ These files provide:
 The core header knows about ARM core peripherals such as NVIC, SysTick, and SCB.
 It does not know about STM32 GPIOC or RCC register layout.
 
-### CMSIS-Core Device Files
+### CMSIS-Core device files
 
 These files come from the microcontroller vendor.
 
@@ -369,7 +369,7 @@ C startup file instead of the vendor assembly startup:
 src/startup_stm32f103.c
 ```
 
-### User Program Files
+### User program files
 
 User program files are the application and project-specific files.
 
@@ -392,7 +392,7 @@ include/stm32f103c8t6.h
 That header is not a full CMSIS device header. It is a small register map written
 for learning direct register programming.
 
-## CMSIS, HAL, And LL
+## CMSIS, HAL, and LL
 
 CMSIS is often confused with vendor drivers. They are related, but they are not
 the same layer.
@@ -407,16 +407,16 @@ the same layer.
 For learning bare-metal behavior, CMSIS-Core and CMSIS device headers are useful.
 HAL is convenient but hides many register-level details.
 
-## STM32 Clone Considerations
+## STM32 clone considerations
 
-This project targets an STM32F103C8T6-style Blue Pill board, but clone chips may
-not match ST silicon perfectly.
+This project targets an STM32F103C8T6-style Blue Pill board. Clone chips can
+differ from ST silicon.
 
 CMSIS-Core is safe to use because it describes the ARM Cortex-M3 core. The core
 behavior is standardized by ARM.
 
 STM32F103 device headers are useful, but they describe ST’s device. A clone such
-as a CKS32F103-compatible part may differ in details such as debug ID, Flash
+as a CKS32F103-compatible part can differ in details such as debug ID, Flash
 programming behavior, electrical characteristics, or undocumented registers.
 
 For this reason, the safest approach for this project is:
@@ -427,11 +427,11 @@ For this reason, the safest approach for this project is:
 4. Keep include paths explicit in the Makefile instead of relying on broad global `CPATH` behavior.
 5. Avoid AI-generated headers as authoritative source files.
 
-AI is useful for explanations and review, but register definitions should be
+AI is useful for explanations and review, but register definitions must be
 checked against vendor documentation, CMSIS headers, SVD files, and real hardware
 behavior.
 
-## How CMSIS Could Fit This Project
+## How CMSIS fits this project
 
 This project keeps a hard boundary between direct-register examples and CMSIS
 examples.
@@ -441,7 +441,7 @@ Application names define which include paths are enabled:
 | App prefix | Meaning | Header policy |
 | --- | --- | --- |
 | `bare-*` | Direct-register examples | Use only local project headers, especially `include/stm32f103c8t6.h` |
-| `cmsis-*` | CMSIS-based examples | May use vendored STM32CubeF1 CMSIS headers |
+| `cmsis-*` | CMSIS-based examples | Can use vendored STM32CubeF1 CMSIS headers |
 
 The Makefile implements that rule with this condition:
 
@@ -476,7 +476,7 @@ make APP=cmsis-blink
 ```
 
 The editor configuration follows the same rule. The project does not use a
-global `CPATH` for headers because that would make all folders see the same
+global `CPATH` for headers because that makes all folders see the same
 includes. Instead, clangd uses folder-level `.clangd` files:
 
 ```text
@@ -488,7 +488,7 @@ apps/cmsis-*/.clangd        local headers plus vendored CMSIS headers
 
 When a `cmsis-*` application is added, give that app its own `.clangd` fragment
 with the CMSIS include paths. Do not add CMSIS include paths to the root `.clangd`,
-because that would also expose them to `bare-*` applications.
+because that also exposes them to `bare-*` applications.
 
 A conservative migration path is:
 
@@ -497,7 +497,7 @@ A conservative migration path is:
 3. Optionally add an STM32F1 CMSIS device header as a reference or alternate path.
 4. Keep HAL out until the goal shifts from learning registers to building features quickly.
 
-The first useful CMSIS-Core features for this project would probably be:
+The first useful CMSIS-Core features for this project are:
 
 ```c
 __enable_irq();

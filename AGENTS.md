@@ -72,6 +72,49 @@ Important paths:
 - `build/`: generated build output; do not edit by hand
 - `site/`: generated MkDocs output; do not edit by hand
 
+## Documentation architecture
+
+The documentation uses four boundaries. Keep each fact in its owning section and
+link to it from summaries instead of copying it:
+
+- `docs/workflow/`: reusable microcontroller-development workflow, source-document
+  roles, target identification, hardware-fact extraction, and bring-up checks
+- `docs/architecture/`: processor and runtime concepts such as reset, interrupts,
+  clocks, the linker script, and startup code
+- `docs/targets/stm32f103c8t6/`: STM32F103C8T6 and Blue Pill facts, including the
+  memory map, package pinout, board wiring, and device restrictions
+- `docs/development-models/`: direct-register C, CMSIS, and comparisons with LL,
+  HAL, and RTOS development
+- `docs/peripherals/`: peripheral concepts and STM32F1 configuration procedures
+- `docs/applications/`: small experiments that prove one hardware concept
+- `docs/project/`: repository-specific build, flash, and debug procedures
+- `docs/reference/`: shared terminology and reference material
+
+The workflow starts with the datasheet, microcontroller reference manual, processor
+manual, errata, and board schematic. It then produces a target profile, memory map,
+linker script, startup code, register definitions, a minimal application, and
+verification steps. The STM32F103C8T6 project is the worked example, not the
+definition of the general workflow.
+
+When documenting a new peripheral, identify its bus and clock, reset state, pins,
+alternate functions, registers, configuration order, clock assumption, status
+flags, interrupts, and a minimal verification method. Use the existing peripheral
+pages as examples.
+
+## Documentation writing rules
+
+Load the `simple-english` skill before writing or substantially revising technical
+documentation. Use short sentences, active voice, defined terms, clear commands,
+and simple headings.
+Load the `writing-for-agents` skill before modifying `AGENTS.md`, a skill, or any
+other instruction document. Run the strict MkDocs build after changing docs or
+navigation.
+
+Prefer short conceptual pages over copied manual chapters. State whether a claim
+comes from the processor manual, MCU reference manual, datasheet, errata, board
+documentation, source code, or a verified command. Do not silently apply an ST
+device fact to a compatible clone.
+
 ## Application Naming Rules
 
 Application prefixes define the abstraction layer:

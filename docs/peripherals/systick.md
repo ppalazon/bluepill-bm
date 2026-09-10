@@ -1,13 +1,13 @@
-# SysTick Timer
+# SysTick timer
 
 SysTick is a small timer built into the ARM Cortex-M3 core. It is not an STM32
-timer peripheral like `TIM2` or `TIM3`; it lives in the Cortex-M private
+timer peripheral like `TIM2` or `TIM3`. It lives in the Cortex-M private
 peripheral area and is available on every STM32F103 core.
 
 SysTick is commonly used for a fixed time base, such as a 1 ms system tick,
 simple delays, or a small cooperative scheduler.
 
-## Basic Idea
+## Basic idea
 
 SysTick is a 24-bit down-counter:
 
@@ -30,7 +30,7 @@ For example, if the core clock is `8 MHz` and you want a 1 ms tick, use:
 reload = 8_000_000 / 1000 - 1 = 7999
 ```
 
-## Registers You Use Most
+## Registers you use most
 
 SysTick is controlled by core memory-mapped registers. It does not need an RCC
 peripheral clock enable.
@@ -72,7 +72,7 @@ void SysTick_Handler(void)
 With `STK_CTRL_CLKSOURCE` set, SysTick uses the Cortex clock, usually `HCLK`.
 With it cleared, STM32F1 feeds SysTick from `HCLK / 8`.
 
-## Practical Notes
+## Practical notes
 
 SysTick is simple, but it has limits:
 
@@ -82,14 +82,14 @@ SysTick is simple, but it has limits:
 | Clock changes | If you change `HCLK`, recompute `STK_LOAD` or the tick period changes. |
 | Interrupt handler | The vector table must contain `SysTick_Handler` at the SysTick exception slot. |
 | Busy waits | Polling the count flag works, but wastes CPU while waiting. |
-| Low power | SysTick is core-related; check the sleep mode behavior before using it as a wake source. |
+ | Low power | SysTick is core-related. Check the sleep mode behavior before using it as a wake source. |
 
 SysTick is a good first timer because it avoids GPIO pins, alternate functions,
 prescalers, and APB timer clock details. Use the general-purpose timers later
 when you need PWM, input capture, output compare, encoder mode, or independent
 timer channels.
 
-## Reference Manual Pages
+## Reference manual pages
 
 Use the project-local STM32F103 reference manual for the STM32-specific SysTick
 details:

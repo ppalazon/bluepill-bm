@@ -1,4 +1,4 @@
-# Bare Blink Application
+# Bare blink application
 
 `bare-blink` is the first direct-register application in this project. It blinks
 the board LED connected to PC13, which means Port C pin 13.
@@ -15,7 +15,7 @@ The application does three things:
 The GPIO concepts and reference manual links are summarized in
 [GPIO Peripheral](../peripherals/gpio.md).
 
-## Code Path
+## Code path
 
 The application source is:
 
@@ -31,7 +31,7 @@ include/stm32f103c8t6.h
 
 This app does not use CMSIS, HAL, LL, or STM32CubeF1 headers.
 
-## GPIOC Clock
+## GPIOC clock
 
 GPIOC is connected to the APB2 bus. Before the GPIOC registers can be used, the
 application enables the GPIOC peripheral clock:
@@ -43,7 +43,7 @@ RCC_APB2ENR |= RCC_APB2ENR_IOPCEN;
 The clock-enable register is summarized in
 [Registers You Use Most](../peripherals/gpio.md#registers-you-use-most).
 
-## PC13 Configuration
+## PC13 configuration
 
 PC13 is configured through `GPIOC_CRH` because pins 8 through 15 use the high
 configuration register.
@@ -70,7 +70,7 @@ That selects:
 The configuration registers and push-pull mode are summarized in
 [GPIO Peripheral](../peripherals/gpio.md).
 
-## LED Toggle
+## LED toggle
 
 The app toggles PC13 by XORing bit 13 in the output data register:
 
@@ -88,7 +88,7 @@ For an active-low LED:
 The GPIO reference page also summarizes the safer set/reset register, `BSRR`, in
 [Registers You Use Most](../peripherals/gpio.md#registers-you-use-most).
 
-## Delay Loop
+## Delay loop
 
 The delay function is just a busy-wait loop:
 
@@ -103,5 +103,5 @@ static void delay(volatile uint32_t count) {
 It repeatedly executes `nop`, which consumes CPU cycles so the LED state remains
 visible before the next toggle.
 
-This is simple and useful for a first example, but it is not an accurate timer.
-Later examples should use SysTick or a hardware timer.
+This loop is useful for a first example, but it is not an accurate timer. Later
+examples can use SysTick or a hardware timer.

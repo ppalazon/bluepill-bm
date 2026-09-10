@@ -1,9 +1,9 @@
-# STM32F103C8T6 Acronyms
+# Acronyms
 
 This list covers the main acronyms used throughout the project documentation and
 local STM32 headers.
 
-## Bus And Address Space
+## Bus and address space
 
 These terms describe how the CPU reaches memory, peripherals, and internal core registers.
 
@@ -14,7 +14,7 @@ These terms describe how the CPU reaches memory, peripherals, and internal core 
 | `PPB` | Private Peripheral Bus | Cortex-M internal peripheral region at `0xE000_0000` |
 | `SCS` | System Control Space | Cortex-M core peripheral space near `0xE000_E000` |
 
-## Memory And Boot
+## Memory and boot
 
 These terms describe where code/data live and how the chip chooses what to execute after reset.
 
@@ -28,7 +28,7 @@ These terms describe where code/data live and how the chip chooses what to execu
 | `SRAM` | Static Random-Access Memory | Internal RAM; `STM32F103C8T6` has 20 KiB |
 | `UID` | Unique Identifier | Factory-programmed unique device ID |
 
-## Cortex-M Core And Debug
+## Cortex-M core and debug
 
 These terms belong to the ARM Cortex-M3 core itself, especially interrupts, system control, and debugging.
 
@@ -43,7 +43,7 @@ These terms belong to the ARM Cortex-M3 core itself, especially interrupts, syst
 | `JTAG` | Joint Test Action Group | ARM debug interface sharing some GPIO pins with alternate functions |
 | `SysTick` | System Tick Timer | Cortex-M 24-bit timer commonly used for OS ticks or delays |
 
-## STM32 Peripherals
+## STM32 peripherals
 
 These are hardware blocks provided by the STM32F103 around the Cortex-M3 CPU.
 
@@ -68,7 +68,7 @@ These are hardware blocks provided by the STM32F103 around the Cortex-M3 CPU.
 | `USB` | Universal Serial Bus | USB full-speed device peripheral |
 | `WWDG` | Window Watchdog | Watchdog that must be refreshed inside a timing window |
 
-## Timer Peripheral Terms
+## Timer peripheral terms
 
 These terms are used by the STM32F103C8T6 timer peripherals and their
 registers.
@@ -116,7 +116,7 @@ registers.
 | `UIF` | Update Interrupt Flag | `SR` flag set when an update event occurs |
 | `URS` | Update Request Source | `CR1` bit limiting update interrupt requests to counter overflow or underflow |
 
-## RCC Registers And Bits
+## RCC registers and bits
 
 These terms are used to configure clocks and reset control for the chip and its peripherals.
 
@@ -131,7 +131,7 @@ These terms are used to configure clocks and reset control for the chip and its 
 | `ENR` | Enable Register | Common RCC suffix for clock-enable registers |
 | `RSTR` | Reset Register | Common RCC suffix for peripheral reset registers |
 
-## GPIO Registers And Fields
+## GPIO registers and fields
 
 These terms are used to configure and control digital input/output pins.
 
@@ -148,7 +148,7 @@ These terms are used to configure and control digital input/output pins.
 | `ODR` | Output Data Register | GPIO register used to read/write output pin states |
 | `PP` | Push-Pull | GPIO output type where the pin is actively driven high and low |
 
-## AFIO And EXTI Registers
+## AFIO and EXTI registers
 
 These terms are used to route pin functions and configure external interrupt/event lines.
 
@@ -163,7 +163,7 @@ These terms are used to route pin functions and configure external interrupt/eve
 | `RTSR` | Rising Trigger Selection Register | EXTI register selecting rising-edge trigger lines |
 | `SWIER` | Software Interrupt Event Register | EXTI register used to trigger EXTI lines from software |
 
-## Board And Pin Labels
+## Board and pin labels
 
 These terms are common labels on boards and schematics, not CPU register names.
 
@@ -172,7 +172,7 @@ These terms are common labels on boards and schematics, not CPU register names.
 | `VCC` | Voltage Common Collector | Board label commonly used for positive supply voltage |
 | `VSS` | Voltage Source Substrate | ST naming for ground pins |
 
-## STM32 Naming Patterns
+## STM32 naming patterns
 
 This section explains how long register and bit names are assembled from smaller pieces.
 

@@ -1,11 +1,11 @@
-# STM32F103C8T6 Pinout
+# STM32F103C8T6 pinout
 
 The STM32F103C8T6 uses the medium-density STM32F103x8 pin definition for its
 48-pin LQFP package. A physical pin can have a GPIO name, a peripheral function,
 and one or more remapped functions. Only one function can control a pin at a
 time.
 
-![Generic STM32F103 pinout diagram](../assets/img-20260904-094011.png)
+![Generic STM32F103 pinout diagram](../../assets/img-20260904-094011.png)
 
 The diagram is a practical board reference. The table below is the authoritative
 LQFP48 mapping for the STM32F103x8 datasheet. `FT` means the digital input is
@@ -15,7 +15,7 @@ means an output at 50 MHz, `CNF=10` means alternate-function push-pull,
 `CNF=11` means alternate-function open-drain, `MODE=00,CNF=01` is a floating
 input, and `MODE=00,CNF=00` is an analog input.
 
-## Boot Pins
+## Boot pins
 
 These pins affect boot selection. `BOOT0` is sampled at reset. `PB2` is also
 labelled `BOOT1` and is used with `BOOT0` by the system boot configuration.
@@ -25,10 +25,10 @@ labelled `BOOT1` and is used with `BOOT0` by the system boot configuration.
 | `PB2/BOOT1` | I/O, FT          | `PB2/BOOT1`               | -                   |
 | `BOOT0`     | I                | `BOOT0`                   | -                   |
 
-## Voltage Pins
+## Voltage pins
 
 Supply and ground pins are not GPIOs. Connect every required supply and ground
-pin according to the board design; do not use these entries as signal pins.
+pin according to the board design. Do not use these entries as signal pins.
 
 | Pin name | Type / I/O level | Main function after reset | Alternate functions |
 | -------- | ---------------- | ------------------------- | ------------------- |
@@ -42,7 +42,7 @@ pin according to the board design; do not use these entries as signal pins.
 | `VSS_3`  | S                | `VSS_3`                   | -                   |
 | `VDD_3`  | S                | `VDD_3`                   | -                   |
 
-## GPIO And Special Functions
+## GPIO and special functions
 
 The remaining bonded pins are grouped first by GPIO port, then by peripheral.
 The GPIO tables retain the datasheet's complete pin metadata. The special
@@ -76,7 +76,7 @@ more than one peripheral group.
 | `PA14` | I/O, FT | `JTCK/SWCLK` | <ul><li>Remap: `PA14`</li></ul> | Debug controller owns the pin; do not configure as GPIO. |
 | `PA15` | I/O, FT | `JTDI` | <ul><li>Remap: `TIM2_CH1_ETR`</li><li>Remap: `PA15`</li><li>Remap: `SPI1_NSS`</li></ul> | <ul><li>TIM2_CH1/ETR input: `MODE=00, CNF=01`</li><li>SPI1_NSS output: `MODE=11, CNF=10`</li></ul> |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li><code>PA0-PA3</code> cannot simultaneously be used by USART2, ADC channels, TIM2, or GPIO.</li>
@@ -115,7 +115,7 @@ more than one peripheral group.
 | `PB14` | I/O, FT | `PB14` | <ul><li>`SPI2_MISO`</li><li>`USART3_RTS`</li><li>Remap: `TIM1_CH2N`</li></ul> | <ul><li>SPI2_MISO/USART3_RTS input: `MODE=00, CNF=01`</li><li>TIM1 output: `MODE=11, CNF=10`</li></ul> |
 | `PB15` | I/O, FT | `PB15` | <ul><li>`SPI2_MOSI`</li><li>Remap: `TIM1_CH3N`</li></ul> | <ul><li>SPI2/TIM1 output: `MODE=11, CNF=10`</li></ul> |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li><code>PB0/PB1</code> cannot simultaneously be ADC12_IN8/IN9, TIM3 channels, remapped TIM1 complementary outputs, or GPIO.</li>
@@ -141,7 +141,7 @@ more than one peripheral group.
 | `PC14-OSC32_IN` | I/O | `PC14` | <ul><li>`OSC32_IN`</li></ul> | Oscillator owns the function; do not configure as GPIO while LSE is enabled. |
 | `PC15-OSC32_OUT` | I/O | `PC15` | <ul><li>`OSC32_OUT`</li></ul> | Oscillator owns the function; do not configure as GPIO while LSE is enabled. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li><code>PC13</code> cannot provide GPIO output and TAMPER-RTC simultaneously; its output is limited to 2 MHz and low current.</li>
@@ -160,14 +160,14 @@ more than one peripheral group.
 | `PD0-OSC_IN` | I | `OSC_IN` | <ul><li>Remap: `PD0`</li></ul> | GPIO input after remap: `MODE=00, CNF=01`. |
 | `PD1-OSC_OUT` | O | `OSC_OUT` | <ul><li>Remap: `PD1`</li></ul> | GPIO output after remap: `MODE=11, CNF=00`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li><code>PD0/PD1</code> cannot be used as GPIO while the external high-speed oscillator owns them.</li>
 <li>The USART2 and USART3 remaps involving other PD pins are not bonded on the LQFP48 package.</li>
 </ul>
 
-### Reset And Clock Pins
+### Reset and clock pins
 
 <ul>
 <li>GPIO clocks: APB2 port clock for the selected GPIO.</li>
@@ -185,7 +185,7 @@ more than one peripheral group.
 | Wakeup | `PA0-WKUP` | `WKUP` alternate function. | Input: `MODE=00, CNF=01`. |
 | Tamper/RTC | `PC13-TAMPER-RTC` | `TAMPER-RTC` alternate function. | GPIO output, if used: `MODE=10, CNF=00`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li><code>NRST</code> is owned by the reset controller and is not an ordinary GPIO.</li>
@@ -210,7 +210,7 @@ more than one peripheral group.
 | `USART1_CTS` | PA11 | - | Input: `MODE=00, CNF=01`. |
 | `USART1_RTS` | PA12 | - | Output: `MODE=11, CNF=10`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>Default USART1 TX/RX on <code>PA9/PA10</code> conflict with TIM1 CH2/CH3.</li>
@@ -236,7 +236,7 @@ more than one peripheral group.
 | `USART2_RX` | PA3 | Input: `MODE=00, CNF=01`. |
 | `USART2_CK` | PA4 | Output: `MODE=11, CNF=10`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>USART2 uses <code>PA0-PA4</code>, so the corresponding ADC channels and TIM2 channels cannot use those pins at the same time.</li>
@@ -260,7 +260,7 @@ more than one peripheral group.
 | `USART3_CTS` | PB13 | PD11, not bonded on LQFP48 | Input: `MODE=00, CNF=01`. |
 | `USART3_RTS` | PB14 | PD12, not bonded on LQFP48 | Output: `MODE=11, CNF=10`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>USART3 default TX/RX on <code>PB10/PB11</code> conflict with I2C2 and remapped TIM2 CH3/CH4.</li>
@@ -269,7 +269,7 @@ more than one peripheral group.
 <li>Asynchronous USART3 TX/RX does not require CK, CTS, or RTS.</li>
 </ul>
 
-### ADC1 And ADC2
+### ADC1 and ADC2
 
 <ul>
 <li>Peripheral bus: APB2, <code>RCC_APB2ENR_ADC1EN</code> and/or <code>ADC2EN</code>.</li>
@@ -293,7 +293,7 @@ LQFP48 analog channels are:
 | `ADC12_IN8` | PB0 | Analog input: `MODE=00, CNF=00`. |
 | `ADC12_IN9` | PB1 | Analog input: `MODE=00, CNF=00`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li><code>ADC12_IN0-3</code> conflict with USART2 and TIM2 functions on PA0-PA3.</li>
@@ -318,13 +318,13 @@ LQFP48 analog channels are:
 | `SPI1_MISO` | PA6 | PB4 | Input: `MODE=00, CNF=01`. |
 | `SPI1_MOSI` | PA7 | PB5 | Output: `MODE=11, CNF=10`; input in slave mode: `MODE=00, CNF=01`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>Default SPI1 PA4-PA7 conflicts with ADC12_IN4-7, USART2 CK, and TIM3.</li>
 <li>Remapped SPI1 PA15/PB3/PB4/PB5 conflicts with JTAG, remapped TIM2, partial TIM3 remap, and I2C1 SMBAI.</li>
 <li>The remapped SPI1 set is selected as a group; individual signals cannot be moved independently.</li>
-<li>SPI NSS may be controlled as ordinary GPIO, but SCK, MISO, and MOSI still require their selected SPI pins.</li>
+<li>SPI NSS can use ordinary GPIO, but SCK, MISO, and MOSI still require their selected SPI pins.</li>
 </ul>
 
 ### SPI2
@@ -342,7 +342,7 @@ LQFP48 analog channels are:
 | `SPI2_MISO` | PB14 | Input: `MODE=00, CNF=01`. |
 | `SPI2_MOSI` | PB15 | Output: `MODE=11, CNF=10`; slave input: `MODE=00, CNF=01`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>SPI2 PB12-PB15 conflicts with USART3 CK/CTS/RTS and TIM1 BKIN/CH1N/CH2N/CH3N.</li>
@@ -350,7 +350,7 @@ LQFP48 analog channels are:
 <li>In slave mode, NSS and SCK become inputs; their GPIO configuration must match the selected SPI role.</li>
 </ul>
 
-### I2C1 And I2C2
+### I2C1 and I2C2
 
 <ul>
 <li>Peripheral bus: APB1, <code>RCC_APB1ENR_I2C1EN</code> and/or <code>I2C2EN</code>.</li>
@@ -367,7 +367,7 @@ LQFP48 analog channels are:
 | `I2C2` | `SDA` | PB11 | - | Alternate open-drain: `MODE=11, CNF=11`. |
 | `I2C2` | `SMBAI` | PB12 | - | Alternate open-drain: `MODE=11, CNF=11`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>I2C1 default PB6/PB7 conflicts with TIM4 CH1/CH2 and remapped USART1 TX/RX.</li>
@@ -411,7 +411,7 @@ LQFP48 analog channels are:
 | `TIM4_CH3` | PB8 | - | Input/capture: `MODE=00, CNF=01`; output compare: `MODE=11, CNF=10`. |
 | `TIM4_CH4` | PB9 | - | Input/capture: `MODE=00, CNF=01`; output compare: `MODE=11, CNF=10`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>TIM1 default channels PA8-PA12 conflict with USART1, CAN, and USB functions on the same pins.</li>
@@ -426,7 +426,7 @@ LQFP48 analog channels are:
 <li>Timer input/capture and output-compare/PWM use different GPIO modes on the same channel pin and cannot be active as both at once.</li>
 </ul>
 
-### CAN And USB
+### CAN and USB
 
 <ul>
 <li><code>CAN</code> peripheral bus: APB1, <code>RCC_APB1ENR_CANEN</code>.</li>
@@ -442,7 +442,7 @@ LQFP48 analog channels are:
 | USB | `USBDM` | PA11 | - | Alternate output: `MODE=11, CNF=10`. |
 | USB | `USBDP` | PA12 | - | Alternate output: `MODE=11, CNF=10`. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>Default CAN PA11/PA12 conflicts with USB D-/D+, USART1 CTS/RTS, and TIM1 CH4/ETR.</li>
@@ -467,7 +467,7 @@ LQFP48 analog channels are:
 | JTAG data out | PB3 | `JTDO` | Debug controller owns the pin. |
 | JTAG reset | PB4 | `JNTRST` | Debug controller owns the pin. |
 
-**Incompatibilities**
+#### Incompatibilities
 
 <ul>
 <li>PA13/PA14 remain unavailable for GPIO while SWD is active.</li>
@@ -476,7 +476,7 @@ LQFP48 analog channels are:
 <li>PB3 cannot be used simultaneously for TRACE SWO and a remapped peripheral.</li>
 </ul>
 
-## Practical Notes
+## Practical notes
 
 - `PC13`, `PC14`, and `PC15` are supplied through a power switch. Limit their
   output speed to 2 MHz, keep the load at or below 30 pF, and do not use them as
@@ -495,7 +495,7 @@ LQFP48 analog channels are:
 
 | Topic                        | Direct link                                                                    |
 | ---------------------------- | ------------------------------------------------------------------------------ |
-| LQFP48 pinout diagram        | [STM32F103x8 datasheet page 26](../refs/stm32f103x8-datasheet.pdf#page=26)     |
-| LQFP48 pin definitions       | [STM32F103x8 datasheet pages 28-33](../refs/stm32f103x8-datasheet.pdf#page=28) |
-| Alternate-function remapping | [RM0008 page 175](../refs/stm32f103x8-reference.pdf#page=175)                  |
-| AFIO mapping register        | [RM0008 page 184](../refs/stm32f103x8-reference.pdf#page=184)                  |
+| LQFP48 pinout diagram        | [STM32F103x8 datasheet page 26](../../refs/stm32f103x8-datasheet.pdf#page=26)     |
+| LQFP48 pin definitions       | [STM32F103x8 datasheet pages 28-33](../../refs/stm32f103x8-datasheet.pdf#page=28) |
+| Alternate-function remapping | [RM0008 page 175](../../refs/stm32f103x8-reference.pdf#page=175)                  |
+| AFIO mapping register        | [RM0008 page 184](../../refs/stm32f103x8-reference.pdf#page=184)                  |

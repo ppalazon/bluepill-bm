@@ -1,11 +1,11 @@
-# General-Purpose Timers (TIM)
+# General-purpose timers (TIM)
 
 TIM peripherals count clock ticks or external edges independently of the CPU.
 On the Blue Pill, use them when a busy-wait loop or SysTick is not precise
 enough, when a pin must react at a defined time, or when hardware must measure
 an external signal.
 
-## Basic Idea
+## Basic idea
 
 A timer increments or decrements `TIMx_CNT` at a programmable rate. It
 generates an update event (UEV) when the counter reaches its auto-reload value
@@ -20,7 +20,7 @@ value, capture the counter on a pin edge, or drive a waveform on a pin.
 | PWM | Output compare | Drive an LED, servo, or motor controller with programmable duty cycle. |
 | Position measurement | Encoder mode | Count quadrature encoder transitions on CH1 and CH2. |
 
-## Timer Acronyms
+## Timer acronyms
 
 | Acronym | Meaning |
 | --- | --- |
@@ -66,11 +66,11 @@ value, capture the counter on a pin edge, or drive a waveform on a pin.
 | `UIF` | Update Interrupt Flag |
 | `URS` | Update Request Source |
 
-See the shared [Acronyms](../acronyms.md#timer-peripheral-terms) page for
+See the shared [acronyms](../reference/acronyms.md#timer-peripheral-terms) page for
 timer terms alongside project-wide terms such as `AFIO`, `APB`, `DMA`, `GPIO`,
 `NVIC`, `RCC`, `SWD`, and `TIM`.
 
-## Timers On STM32F103C8T6
+## Timers on STM32F103C8T6
 
 The C8T6 has one advanced-control timer and three general-purpose timers. The
 reference manual also describes other STM32F1 timers; do not assume those are
@@ -102,7 +102,7 @@ The current project starts from 8 MHz HSI with both APB prescalers equal to 1,
 so `TIM1`, `TIM2`, `TIM3`, and `TIM4` initially run from an 8 MHz timer clock.
 Recalculate timing values whenever the RCC clock tree changes.
 
-## GPIO Pins And Remapping
+## GPIO pins and remapping
 
 Timer outputs use alternate-function push-pull GPIO mode. Timer inputs, such as
 input capture, ETR, and BKIN, use an input mode, commonly floating input. Enable
@@ -139,27 +139,27 @@ The full TIM1 remap uses port E pins and is not available on the 48-pin package.
 the same time. To use PA15 or PB3 as timer pins while retaining SWD debugging,
 disable JTAG but keep SWD enabled through `AFIO_MAPR.SWJ_CFG`.
 
-### TIM3 And TIM4
+### TIM3 and TIM4
 
 | Timer | Remap | CH1 | CH2 | CH3 | CH4 | ETR | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `TIM3` | `00`, no remap | PA6 | PA7 | PB0 | PB1 | PE0 | PE0 is not bonded on the 48-pin package. |
-| `TIM3` | `10`, partial remap | PB4 | PB5 | PB0 | PB1 | PE0 | PB4 is a JTAG pin; PE0 remains unavailable. |
+| `TIM3` | `10`, partial remap | PB4 | PB5 | PB0 | PB1 | PE0 | PB4 is a JTAG pin. PE0 remains unavailable. |
 | `TIM4` | `0`, no remap | PB6 | PB7 | PB8 | PB9 | PE0 | PE0 is not bonded on the 48-pin package. |
 
-TIM3 full remap requires PC6 through PC9, and TIM4 remap requires PD12 through
-PD15; neither mapping is available on the C8T6's 48-pin package. TIM3 partial
+TIM3 full remap requires PC6 through PC9. TIM4 remap requires PD12 through PD15.
+Neither mapping is available on the C8T6's 48-pin package. TIM3 partial
 remap needs JTAG disabled to reclaim PB4.
 
-## Key Features
+## Key features
 
 | Feature | How it works |
 | --- | --- |
 | Counter and prescaler | `CNT` counts the timer clock after division by `PSC + 1`. The counter can count up, down, or center-aligned. |
 | Auto-reload | `ARR` sets the terminal count and therefore the update period. |
 | Four channels | Each `CCRx` can capture an input edge, compare a count, generate PWM, or create a one-pulse output. |
-| Synchronization | `CR2.MMS` selects a master trigger output; `SMCR.TS` and `SMCR.SMS` let another timer reset, gate, start from, or count that trigger. |
-| Interrupts | `DIER.UIE` enables update interrupts; `CCxIE` enables capture/compare interrupts. The corresponding flags are in `SR`. |
+| Synchronization | `CR2.MMS` selects a master trigger output. `SMCR.TS` and `SMCR.SMS` let another timer reset, gate, start from, or count that trigger. |
+| Interrupts | `DIER.UIE` enables update interrupts. `CCxIE` enables capture/compare interrupts. The corresponding flags are in `SR`. |
 | DMA | `DIER.UDE`, `CCxDE`, and `TDE` generate DMA requests on update, compare/capture, and trigger events. |
 | Encoder interface | `SMCR.SMS` modes 1 through 3 use CH1 and CH2 to count a quadrature encoder. |
 | Advanced outputs, TIM1 only | CH1N..CH3N provide complementary outputs. `BDTR.DTG` adds dead time, `BDTR.BKE` enables the BKIN safety input, and `BDTR.MOE` must be set before outputs drive pins. |
@@ -169,7 +169,7 @@ Use TIM1's break and complementary-output features for power stages only after
 understanding the external safety circuit. A break event can disable outputs
 immediately; it is not required for ordinary LED PWM.
 
-## Registers You Use Most
+## Registers you use most
 
 | Register | Purpose |
 | --- | --- |
@@ -182,12 +182,12 @@ immediately; it is not required for ordinary LED PWM.
 | `TIMx_CCMR1`, `TIMx_CCMR2` | Select input capture or output compare/PWM mode for channels 1/2 and 3/4. |
 | `TIMx_CCER` | Enables each channel and selects input edge or output polarity. |
 | `TIMx_CNT` | Current counter value. |
-| `TIMx_PSC` | Prescaler reload value; divide timer clock by `PSC + 1`. |
-| `TIMx_ARR` | Auto-reload value; an up-counter runs from 0 through `ARR`. |
+| `TIMx_PSC` | Prescaler reload value. The timer clock is divided by `PSC + 1`. |
+| `TIMx_ARR` | Auto-reload value. An up-counter runs from 0 through `ARR`. |
 | `TIMx_CCR1` to `TIMx_CCR4` | Captured count in input mode, or compare/PWM threshold in output mode. |
 | `TIM1_RCR`, `TIM1_BDTR` | TIM1-only repetition, dead-time, break, and main-output control. |
 
-## Update Events And Timing
+## Update events and timing
 
 For an up-counting timer without TIM1 repetition:
 
@@ -211,13 +211,13 @@ an interrupt.
 
 With TIM1, the normal UEV rate is additionally divided by `RCR + 1`.
 
-## Configuration Examples
+## Configuration examples
 
-These examples use CMSIS register names. They show the hardware sequence; a
+These examples use CMSIS register names. They show the hardware sequence. A
 `bare-*` application needs equivalent local register definitions instead of
-including vendor CMSIS headers.
+vendor CMSIS headers.
 
-### Periodic 1 ms Interrupt
+### Periodic 1 ms interrupt
 
 This TIM3 configuration produces a 1 kHz update event from the project's
 current 8 MHz timer clock. The interrupt handler clears `UIF` before doing its
@@ -244,7 +244,7 @@ void TIM3_IRQHandler(void)
 }
 ```
 
-### PWM Output On TIM3 CH1
+### PWM output on TIM3 CH1
 
 TIM3 channel 1 is on PA6 without remapping. PWM mode 1 makes the output active
 while `CNT < CCR1`. With `ARR = 999` and `CCR1 = 250`, the duty cycle is 25%.
@@ -266,7 +266,7 @@ TIM3->EGR = TIM_EGR_UG;
 TIM3->CR1 |= TIM_CR1_CEN;
 ```
 
-### Measure An Input Interval
+### Measure an input interval
 
 Configure a channel as input capture, select an edge in `CCER`, and enable
 `CCxE`. At each selected edge, hardware copies `CNT` into `CCRx` and sets
@@ -283,7 +283,7 @@ For example, set `TIM2->PSC = 7` for 1 us resolution, set `CC1S = 01` in
 is noisy, and handle `CC1OF` if a new edge arrives before software reads the
 previous capture.
 
-### Trigger, Synchronize, Or Use DMA
+### Trigger, synchronize, or use DMA
 
 For one delayed pulse, configure a channel in PWM or output-compare mode, set
 `CR1.OPM`, and use `CCR` for the transition time and `ARR` for the end of the
@@ -300,7 +300,7 @@ the relevant `CCxDE` bit for a compare/capture event, then configure the DMA
 channel specified by the device DMA mapping. The timer generates requests; DMA
 performs the data movement without entering the CPU interrupt handler.
 
-## Reference Manual Pages
+## Reference manual pages
 
 | Topic | Direct link |
 | --- | --- |

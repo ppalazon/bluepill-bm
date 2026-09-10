@@ -1,10 +1,10 @@
-# Project Workflow
+# Workflow overview
 
 This page describes the path followed to build this STM32F103C8T6 bare-metal
 project from scratch. It is intentionally schematic: the goal is to show the
 order of decisions and the way of thinking, not every register detail.
 
-## Mental Model
+## Mental model
 
 A bare-metal project has no operating system between the program and the chip.
 The firmware must provide everything needed to boot, place code in memory,
@@ -31,7 +31,7 @@ For this project, the answers are:
 | First app | `apps/bare-blink/main.c` |
 | First peripheral | GPIOC, pin `PC13`, the onboard LED |
 
-## Build From The Outside In
+## Build from the outside in
 
 The workflow is to build the project from the fixed hardware facts toward the
 application code.
@@ -50,9 +50,9 @@ chip facts
 
 Each layer depends on the layer before it. If the memory map is wrong, the
 linker script is wrong. If the linker script is wrong, startup cannot prepare
-RAM correctly. If startup is wrong, `main` may never run.
+RAM correctly. If startup is wrong, `main` can fail to run.
 
-## Step 1: Identify The Target
+## Step 1: Identify the target
 
 Start with the exact board and MCU, not with generic ARM code.
 
@@ -71,7 +71,7 @@ Debug: SWD through ST-Link
 This decides the compiler flags, linker script memory sizes, OpenOCD target,
 startup vector table, and peripheral register addresses.
 
-## Step 2: Create The Memory Map
+## Step 2: Create the memory map
 
 The linker needs to know where code and data can live.
 
@@ -93,10 +93,11 @@ The rule of thumb is simple:
 | Zeroed variables | RAM | Startup clears them before `main`. |
 | Stack | RAM | Function calls and local runtime state need writable memory. |
 
-See [Memory Map](stm32f103c8t6-memory-map.md) and
-[Linker And Startup](linker-startup.md) for the detailed version.
+See the [memory map](../targets/stm32f103c8t6/memory-map.md) and
+[linker and startup](../architecture/linker-startup.md) pages for the detailed
+version.
 
-## Step 3: Write The Linker Script
+## Step 3: Write the linker script
 
 The linker script places program sections into Flash and RAM.
 
@@ -111,7 +112,7 @@ The important jobs are:
 The linker script is the bridge between the ELF file and the physical memory of
 the microcontroller.
 
-## Step 4: Write Startup Code
+## Step 4: Write startup code
 
 On Cortex-M, the CPU starts from the vector table:
 
@@ -133,7 +134,7 @@ The project startup file provides that vector table and the reset handler.
 It also provides weak default interrupt handlers. That allows an application to
 override only the interrupts it needs later.
 
-## Step 5: Add Minimal System Code
+## Step 5: Add minimal system code
 
 `SystemInit()` exists because many embedded projects expect one early chip setup
 function before `main`.
@@ -145,7 +146,7 @@ simple GPIO program.
 The principle is: make the smallest hardware configuration that lets the next
 step work.
 
-## Step 6: Define Registers
+## Step 6: Define registers
 
 For `bare-*` applications, the project uses a small local header:
 
@@ -168,7 +169,7 @@ For example, using the LED requires:
 Later `cmsis-*` applications can use the vendored STM32CubeF1 CMSIS headers, but
 the direct-register examples remain independent.
 
-## Step 7: Build The Firmware
+## Step 7: Build the firmware
 
 The `Makefile` turns source files into firmware outputs.
 
@@ -207,11 +208,12 @@ The naming convention keeps responsibilities clear:
 | `ll-*` | Future STM32 LL-based examples. |
 | `hal-*` | Future STM32 HAL-based examples. |
 
-See [Build Process](build-process.md) for the detailed build explanation.
+See the [build process](../project/build-process.md) page for the detailed build
+explanation.
 
-## Step 8: Make The First App Small
+## Step 8: Make the first app small
 
-The first application should prove the complete boot-to-hardware chain with the
+The first application must prove the complete boot-to-hardware chain with the
 least possible peripheral complexity.
 
 Blinking `PC13` is useful because it proves:
@@ -233,7 +235,7 @@ toggle PC13 forever
 
 That is enough to validate the whole skeleton.
 
-## Step 9: Flash And Debug
+## Step 9: Flash and debug
 
 OpenOCD connects the host tools to the MCU through ST-Link and SWD.
 
@@ -255,7 +257,7 @@ The ELF file is the important debug artifact because it contains symbols and
 source mapping. The `.bin` and `.hex` files are useful flash image formats, but
 they do not contain the same debug information.
 
-## Step 10: Add Complexity One Layer At A Time
+## Step 10: Add complexity one layer at a time
 
 After the first blink works, the project can grow safely.
 
@@ -282,7 +284,7 @@ Good next layers are:
 | CMSIS version | Same hardware, standard vendor register names. |
 | LL/HAL versions | Higher-level vendor libraries and their tradeoffs. |
 
-## Working Rules
+## Working rules
 
 Use these rules when building bare-metal projects:
 
@@ -296,7 +298,7 @@ Use these rules when building bare-metal projects:
 8. Build often, inspect the map file when memory layout matters, and debug from
    the ELF file.
 
-The main idea is to make every layer explainable. If the LED blinks, we should
+The main idea is to make every layer explainable. If the LED blinks, we must
 be able to say which register enabled the clock, which register configured the
 pin, where the code lives in Flash, how RAM was initialized, and how the CPU
 reached `main`.
