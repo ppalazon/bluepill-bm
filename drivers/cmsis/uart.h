@@ -3,6 +3,7 @@
 
 #include "stm32f1xx.h"
 
-void uart_init(void);
+void uart1_init(void);
+void uart2_init(void);
 
 #endif /* UART_H */

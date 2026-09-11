@@ -10,7 +10,7 @@
 int main(void) {
     // Initialization
     board_led_init();
-    uart_init();
+    uart1_init();
     pb0_adc_init();
 
     // Turn off the board led;

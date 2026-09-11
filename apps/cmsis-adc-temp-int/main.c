@@ -16,7 +16,7 @@
 int main(void) {
     // Initialization
     board_led_init();
-    uart_init();
+    uart1_init();
     adc1_temperature_init();
 
     // Turn off the board led;
