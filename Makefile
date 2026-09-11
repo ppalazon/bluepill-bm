@@ -21,6 +21,7 @@ COMMON_FLAGS := $(CPU_FLAGS) -Wall -Wextra -Werror -ffunction-sections -fdata-se
 CFLAGS := $(COMMON_FLAGS) -std=c11 -Iinclude
 ASFLAGS := $(COMMON_FLAGS) -x assembler-with-cpp
 LDFLAGS := $(CPU_FLAGS) -T$(LINKER_SCRIPT) -nostartfiles -Wl,--gc-sections -Wl,-Map=$(BUILD_DIR)/$(PROJECT).map --specs=nano.specs --specs=nosys.specs
+LDLIBS := -lm
 
 # Vendor CMSIS headers are only visible to applications named cmsis-*.
 # Bare-register applications stay limited to the local include/ directory.
@@ -51,7 +52,7 @@ HEX := $(BUILD_DIR)/$(PROJECT).hex
 all: $(ELF) $(BIN) $(HEX) size
 
 $(ELF): $(OBJECTS) $(LINKER_SCRIPT)
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+	$(CC) $(OBJECTS) $(LDFLAGS) $(LDLIBS) -o $@
 
 $(BUILD_DIR)/%.o: %.c
 	mkdir -p $(dir $@)

@@ -82,7 +82,7 @@ uint32_t adc_read(void) {
     return ADC1->DR & 0x0FFFu;
 }
 
-static uint32_t adc1_internal_read_raw(uint32_t channel) {
+static uint32_t adc1_channel_read_raw(uint32_t channel) {
     ADC1->SQR3 = channel << ADC_SQR3_SQ1_Pos;
     ADC1->CR2 &= ~ADC_CR2_CONT;
     ADC1->CR2 |= ADC_CR2_ADON;
@@ -97,10 +97,15 @@ static uint32_t adc1_internal_read_raw(uint32_t channel) {
 
 uint32_t adc1_temperature_read_raw(void) {
     /* The temperature sensor is ADC1 channel 16. */
-    return adc1_internal_read_raw(16u);
+    return adc1_channel_read_raw(16u);
+}
+
+uint32_t adc1_channel8_read_raw(void) {
+    /* PB0 is ADC1 channel 8. */
+    return adc1_channel_read_raw(8u);
 }
 
 uint32_t adc1_vrefint_read_raw(void) {
     /* VREFINT is ADC1 channel 17. */
-    return adc1_internal_read_raw(17u);
+    return adc1_channel_read_raw(17u);
 }

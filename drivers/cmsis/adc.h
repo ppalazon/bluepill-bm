@@ -9,6 +9,7 @@ void adc1_temperature_init(void);
 void start_conversion(void);
 void calibration(void);
 uint32_t adc_read(void);
+uint32_t adc1_channel8_read_raw(void);
 uint32_t adc1_temperature_read_raw(void);
 uint32_t adc1_vrefint_read_raw(void);
 
