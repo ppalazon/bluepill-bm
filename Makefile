@@ -47,7 +47,7 @@ ELF := $(BUILD_DIR)/$(PROJECT).elf
 BIN := $(BUILD_DIR)/$(PROJECT).bin
 HEX := $(BUILD_DIR)/$(PROJECT).hex
 
-.PHONY: all clean flash openocd debug size
+.PHONY: all clean flash openocd debug-server debug size
 
 all: $(ELF) $(BIN) $(HEX) size
 
@@ -76,6 +76,11 @@ flash: $(ELF)
 
 openocd:
 	$(OPENOCD) -f $(OPENOCD_CFG)
+
+debug-server: $(ELF)
+	$(OPENOCD) -f $(OPENOCD_CFG) \
+		-c "program $(ELF) verify" \
+		-c "reset halt"
 
 debug: $(ELF)
 	$(GDB) $(ELF) -ex "target extended-remote localhost:3333" -ex "monitor reset halt"
