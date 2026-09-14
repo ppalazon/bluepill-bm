@@ -76,7 +76,7 @@ int main(void) {
     board_led_off();
 
     // Welcome message
-    printf("Welcome to cmsis-adc-temp-ch8 app\r\n");
+    printf("Welcome to cmsis-adc-temp-ntc app\r\n");
 
     // Continous loop
     uint32_t count = 0;
