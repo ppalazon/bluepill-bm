@@ -4,4 +4,5 @@ ColumnLimit: 100
 UseTab: Never
 BreakBeforeBraces: Attach
 AllowShortFunctionsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: Empty
 SortIncludes: false
