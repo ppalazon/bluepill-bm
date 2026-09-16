@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "stm32f1xx.h"
 
 bool rtc_init(void);
 bool rtc_set_prescaler_1hz(void);

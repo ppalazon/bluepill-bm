@@ -2,13 +2,12 @@
 #include "rtc.h"
 #include "stm32f103xb.h"
 #include "uart.h"
-#include "systick.h"
+// #include "systick.h"
 #include <stdint.h>
 #include <stdio.h>
 
-#define BLINK_DELAY 500
+// #define BLINK_DELAY 500
 
-static volatile uint32_t count = 0;
 static volatile uint32_t rtc_second = 0;
 
 int main(void) {
@@ -37,7 +36,7 @@ int main(void) {
     // Turn on board led
     board_led_on();
 
-    // uint32_t count = 0;
+    uint32_t count = 0;
     while (1) {
         if (rtc_second > 0) {
             rtc_second--;

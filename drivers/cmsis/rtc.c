@@ -1,5 +1,4 @@
 #include "rtc.h"
-#include "stm32f1xx.h"
 
 #define RTC_LSE_PRESCALER 0x7FFFu
 #define RTC_WAIT_LIMIT 16000000u
@@ -157,6 +156,7 @@ bool rtc_set_epoch_time(uint32_t epoch_time_sec) {
 }
 
 void rtc_clear_second_flag(void) {
+    rtc_wait_write_finished();
     rtc_enable_backup_writes();
     RTC->CRL &= ~RTC_CRL_SECF;
     rtc_disable_backup_writes();
