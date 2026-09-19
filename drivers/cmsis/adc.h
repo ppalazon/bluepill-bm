@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "stm32f1xx.h"
 
+void adc1_clock_init(void);
+void adc_startup_delay(void);
 void pb0_adc_init(void);
 void adc1_temperature_init(void);
 void start_conversion(void);

@@ -5,5 +5,6 @@
 
 void uart1_init(void);
 void uart2_init(void);
+uint16_t compute_uart_bd(uint32_t periph_clk, uint32_t baudrate);
 
 #endif /* UART_H */

@@ -1,17 +1,18 @@
 #include "adc.h"
+#include "board_clock.h"
 #include <stdint.h>
 
-static void adc_startup_delay(void) {
-    /* Allow the ADC and internal sensor to settle at the current 8 MHz clock. */
+void adc_startup_delay(void) {
+    /* Allow the ADC and internal sensor to settle at the current HCLK frequency. */
     for (volatile uint32_t count = 0u; count < 1000u; ++count) {
         __asm volatile("nop");
     }
 }
 
-static void adc1_clock_init(void) {
+void adc1_clock_init(void) {
     RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
 
-    /* PCLK2 is 8 MHz in this project. Keep ADCCLK below 14 MHz. */
+    /* PCLK2 is divided by two, keeping ADCCLK below 14 MHz. */
     RCC->CFGR &= ~RCC_CFGR_ADCPRE;
     RCC->CFGR |= RCC_CFGR_ADCPRE_DIV2;
 }
@@ -62,12 +63,10 @@ void adc1_temperature_init(void) {
 
 void calibration(void) {
     ADC1->CR2 |= ADC_CR2_RSTCAL;
-    while ((ADC1->CR2 & ADC_CR2_RSTCAL) != 0u) {
-    }
+    while ((ADC1->CR2 & ADC_CR2_RSTCAL) != 0u) {}
 
     ADC1->CR2 |= ADC_CR2_CAL;
-    while ((ADC1->CR2 & ADC_CR2_CAL) != 0u) {
-    }
+    while ((ADC1->CR2 & ADC_CR2_CAL) != 0u) {}
 }
 
 void start_conversion(void) {
@@ -76,8 +75,7 @@ void start_conversion(void) {
 }
 
 uint32_t adc_read(void) {
-    while ((ADC1->SR & ADC_SR_EOC) == 0u) {
-    }
+    while ((ADC1->SR & ADC_SR_EOC) == 0u) {}
 
     return ADC1->DR & 0x0FFFu;
 }
@@ -89,8 +87,7 @@ static uint32_t adc1_channel_read_raw(uint32_t channel) {
     ADC1->SR &= ~ADC_SR_EOC;
     ADC1->CR2 |= ADC_CR2_SWSTART;
 
-    while ((ADC1->SR & ADC_SR_EOC) == 0u) {
-    }
+    while ((ADC1->SR & ADC_SR_EOC) == 0u) {}
 
     return ADC1->DR & 0x0FFFu;
 }
