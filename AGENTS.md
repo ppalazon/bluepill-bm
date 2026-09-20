@@ -63,7 +63,7 @@ Important paths:
 - `src/newlib_stubs.c`: minimal Newlib syscall stubs
 - `include/stm32f103c8t6.h`: local direct-register header for `bare-*` apps
 - `drivers/cmsis/`: project CMSIS-oriented driver code
-- `asm/startup_stm32f103c8tx.s`: reference assembly startup, not linked by default
+- `src/asm/startup_stm32f103c8tx.s`: reference assembly startup, not linked by default
 - `linker/STM32F103C8TX_FLASH.ld`: active linker script
 - `openocd/bluepill.cfg`: OpenOCD config for this board/probe
 - `docs/`: MkDocs source files

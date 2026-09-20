@@ -637,7 +637,7 @@ firmware image.
 The project also keeps an assembly version here:
 
 ```text
-asm/startup_stm32f103c8tx.s
+src/asm/startup_stm32f103c8tx.s
 ```
 
 That assembly file is only for education and reference. It shows the same startup
@@ -913,9 +913,9 @@ void Reset_Handler(void) {
 The exact interrupt order must match the STM32F103 medium-density vector table
 from the reference manual or startup file template.
 
-Use `asm/startup_stm32f103c8tx.s` only as a reference to compare the same ideas in
-assembly. Do not enable it in the build unless you intentionally replace the C
-startup implementation.
+Use `src/asm/startup_stm32f103c8tx.s` only as a reference to compare the same
+ideas in assembly. Do not enable it in the build unless you intentionally replace
+the C startup implementation.
 
 ## Relocation during linking and startup
 

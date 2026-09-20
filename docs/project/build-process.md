@@ -262,7 +262,7 @@ apps/bare-blink/main.c -> build/apps/bare-blink/main.o
 src/system_stm32f103.c -> build/src/system_stm32f103.o
 ```
 
-This project keeps an assembly startup file under `asm/` as a reference, but
+This project keeps an assembly startup file under `src/asm/` as a reference, but
 the active build now uses the C startup file in `src/startup_stm32f103.c`. If an
 assembly startup file is enabled later, it is assembled into an object file with:
 
@@ -275,7 +275,7 @@ $(BUILD_DIR)/%.o: %.s
 For example, if enabled:
 
 ```text
-asm/startup_stm32f103c8tx.s -> build/asm/startup_stm32f103c8tx.o
+src/asm/startup_stm32f103c8tx.s -> build/src/asm/startup_stm32f103c8tx.o
 ```
 
 An object file contains machine code and symbols, but it is not placed at final

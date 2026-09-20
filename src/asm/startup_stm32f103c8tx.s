@@ -12,8 +12,8 @@
  * - linker symbols used for .data/.bss initialization
  * - default interrupt handler behavior
  *
- * This file lives under asm/ as a learning/reference version of the same startup
- * flow. It is not linked by the current Makefile.
+ * This file lives under src/asm/ as a learning/reference version of the same
+ * startup flow. It is not linked by the current Makefile.
  *
  * This file follows the standard Cortex-M startup pattern:
  *
