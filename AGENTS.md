@@ -183,7 +183,7 @@ Do not include `stm32f103xb.h` directly unless there is a concrete reason.
 Keep clangd configuration layered:
 
 - Root `.clangd`: common C and Cortex-M flags only
-- `apps/cmsis-*/.clangd`: CMSIS include paths and `-DSTM32F103xB`
+- `apps/.clangd`: local include paths, with CMSIS flags for `cmsis-*` paths
 - `drivers/cmsis/.clangd`: CMSIS driver include paths and symbols
 
 Do not use global `CPATH` for this project. Do not add CMSIS include paths to the

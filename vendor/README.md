@@ -63,8 +63,8 @@ vendor/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include
 ```
 
 Do not add these include paths globally through `CPATH` or the root `.clangd`.
-Each future `apps/cmsis-*` application should have its own `.clangd` fragment if
-clangd needs to see CMSIS headers for editor diagnostics.
+The conditional fragment in `apps/.clangd` adds them only for `cmsis-*`
+applications.
 
 ## Scope
 

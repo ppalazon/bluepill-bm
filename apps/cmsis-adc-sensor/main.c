@@ -28,7 +28,7 @@ int main(void) {
     while (1) {
         board_led_toggle();
         sensor_value = adc_read();
-        printf("Sensor measurement(%ld): %ld\r\n", count, sensor_value);
+        printf("Sensor measurement(%ld): %ld\r\n", (long)count, (long)sensor_value);
         systick_msec_delay(BLINK_DELAY);
         count++;
     }

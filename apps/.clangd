@@ -1,6 +1,12 @@
 CompileFlags:
   Add:
     - -I../../include
+
+---
+If:
+  PathMatch: cmsis-[^/]+/.*
+CompileFlags:
+  Add:
     - -I../../drivers/cmsis
     - -I../../vendor/STM32CubeF1/Drivers/CMSIS/Core/Include
     - -I../../vendor/STM32CubeF1/Drivers/CMSIS/Device/ST/STM32F1xx/Include

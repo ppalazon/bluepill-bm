@@ -480,14 +480,13 @@ global `CPATH` for headers because that makes all folders see the same
 includes. Instead, clangd uses folder-level `.clangd` files:
 
 ```text
-.clangd                     common Cortex-M target flags
-src/.clangd                 local runtime headers only
-apps/bare-blink/.clangd     local bare-register headers only
-apps/cmsis-*/.clangd        local headers plus vendored CMSIS headers
+.clangd          common Cortex-M target flags
+src/.clangd      local runtime headers only
+apps/.clangd     local app headers, with CMSIS flags for `cmsis-*` paths
 ```
 
-When a `cmsis-*` application is added, give that app its own `.clangd` fragment
-with the CMSIS include paths. Do not add CMSIS include paths to the root `.clangd`,
+The path condition in `apps/.clangd` applies the CMSIS include paths to each
+`cmsis-*` application. Do not add CMSIS include paths to the root `.clangd`,
 because that also exposes them to `bare-*` applications.
 
 A conservative migration path is:
