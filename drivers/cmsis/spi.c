@@ -52,25 +52,21 @@ void spi1_config(void) {
 void spi1_transmit(uint8_t *data, uint32_t size) {
     for (uint32_t i = 0; i < size; i++) {
         // Wait until TXE is set
-        while (!(SPI1->SR & SPI_SR_TXE)) {
-        }
+        while (!(SPI1->SR & SPI_SR_TXE)) {}
 
         // Write the command in the data register
         SPI1->DR = data[i];
 
         // Full-duplex SPI receives one byte for every transmitted byte.
-        while (!(SPI1->SR & SPI_SR_RXNE)) {
-        }
+        while (!(SPI1->SR & SPI_SR_RXNE)) {}
         (void)SPI1->DR;
     }
 
     // Wait until TXE is set
-    while (!(SPI1->SR & SPI_SR_TXE)) {
-    }
+    while (!(SPI1->SR & SPI_SR_TXE)) {}
 
     // Wait for BUSY flag to reset
-    while (SPI1->SR & SPI_SR_BSY) {
-    }
+    while (SPI1->SR & SPI_SR_BSY) {}
 
     // Clear OVR with the required DR-then-SR read sequence if it was already set.
     if (SPI1->SR & SPI_SR_OVR) {
@@ -85,8 +81,7 @@ void spi1_receive(uint8_t *data, uint32_t size) {
         SPI1->DR = 0;
 
         // Wait for RXNE flag to be set
-        while (!(SPI1->SR & SPI_SR_RXNE)) {
-        }
+        while (!(SPI1->SR & SPI_SR_RXNE)) {}
 
         // Read data from data register
         *data++ = SPI1->DR;

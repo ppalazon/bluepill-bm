@@ -133,8 +133,7 @@ const uint32_t g_pfnVectors[] __attribute__((section(".isr_vector"), used)) = {
 void Default_Handler(void) {
     // Engaging in an infinite loop effectively prevents the program from
     // proceeding into an undefined state following such an event
-    while (1) {
-    }
+    while (1) {}
 }
 
 void Reset_Handler(void) {
@@ -156,6 +155,5 @@ void Reset_Handler(void) {
 
     main();
 
-    while (1) {
-    }
+    while (1) {}
 }
