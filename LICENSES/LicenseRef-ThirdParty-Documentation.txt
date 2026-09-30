@@ -1,0 +1,4 @@
+These files are third-party reference documents.
+
+The copyright and license terms are stated in each document. This repository
+does not grant additional rights to copy, modify, or distribute these files.

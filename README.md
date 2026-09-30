@@ -1,18 +1,11 @@
 # Blue Pill Bare-Metal
 
-Small bare-metal STM32F103C8T6 Blue Pill learning project built without
-STM32CubeIDE.
+The main objective of this project is to learn how create bare metal
+applications for any kind of microcontroller. In this case, I've just selected
+one that I have at home, and more specifically the Blue Pill board with the
+STM32F103C microcontroller.
 
-The objective is to make the full firmware path explicit:
-
-- What happens after reset
-- How the vector table and startup code reach `main()`
-- How the linker script maps Flash and RAM
-- How C runtime sections like `.data` and `.bss` are prepared
-- How peripheral registers are configured directly
-- How CMSIS-based examples compare with direct-register code later
-
-Target hardware:
+![Blue Pill board](docs/assets/img-20260904-094011.png)
 
 - Board: Blue Pill development board
 - MCU: STM32F103C8T6
@@ -22,11 +15,19 @@ Target hardware:
 - Debug/programming: ST-Link V2 clone over SWD
 - Onboard LED: usually `PC13`, active-low
 
-![Blue Pill board](docs/assets/img-20260904-094011.png)
+But, to make it a little bit harder, it's a clone microcontroller by the
+Chinese CKS. So, I can't use the official IDE (STM32CubeIDE), and I have to
+create my own workflow and build system to work with this board. I use
+well-known open source application such as gcc and make.
 
-The project intentionally stays small and educational. Early `bare-*` examples
-use local register definitions only. `cmsis-*` examples can use the pinned
-STM32CubeF1 CMSIS headers while keeping that abstraction layer separate.
+## License
 
-Build, flash, debug, repository layout, and project workflow notes live in the
-documentation site under `docs/`.
+The code and documentation in this repository use the [BSD 3-Clause
+License](LICENSE). Reference documents and other third-party material remain
+under the licenses and terms of their copyright holders.
+
+## Trademark notice
+
+STM32 is a trademark of STMicroelectronics. This independent project uses the
+STM32 name only to identify the target device and compatible software. The
+project is not affiliated with or endorsed by STMicroelectronics.

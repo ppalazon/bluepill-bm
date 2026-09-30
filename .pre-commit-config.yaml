@@ -6,3 +6,8 @@ repos:
         entry: clang-format -i
         language: system
         files: ^(?!vendor/).*\.(c|h)$
+      - id: reuse
+        name: reuse lint
+        entry: reuse lint
+        language: system
+        pass_filenames: false
