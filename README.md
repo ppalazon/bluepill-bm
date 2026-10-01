@@ -1,9 +1,13 @@
 # Blue Pill Bare-Metal
 
 The main objective of this project is to learn how create bare metal
-applications for any kind of microcontroller. In this case, I've just selected
-one that I have at home, and more specifically the Blue Pill board with the
-STM32F103C microcontroller.
+applications for any kind of microcontroller. It includes create the necessary
+code to initialize the processor, drivers, and applications. I won't use the
+official IDE or tools, but we get some vendor dependencies to simplify the
+driver generation.
+
+To make it as a practical project, I've just selected the Blue Pill board with
+the STM32F103C microcontroller. It's the one that I had at home.
 
 ![Blue Pill board](docs/assets/img-20260904-094011.png)
 
@@ -15,44 +19,66 @@ STM32F103C microcontroller.
 - Debug/programming: ST-Link V2 clone over SWD
 - Onboard LED: usually `PC13`, active-low
 
-But, to make it a little bit harder, it's a clone microcontroller by the
-Chinese CKS. So, I can't use the official IDE (STM32CubeIDE), and I have to
-create my own workflow and build system to work with this board. I use
-well-known open source application such as gcc and make.
+## Dependencies
 
-## Bare metal applications
+This project has some dependencies to simply the development process, included
+as git submodules. This method allows you update or change versions quickly.
 
-The idea behind the bare metal applications is that they are executed directly
-by the microprocessor without a operating system that manages the resources.
-Once the application starts it must be executed forever in a super-loop with no
-end on it. A very common of this loop is the following snippet:
+- [STMicroelectronics/STM32CubeF1](https://github.com/STMicroelectronics/STM32CubeF1):
+  HAL + LL Drivers, CMSIS Core, CMSIS Device, and MW libraries
 
-```c
-while (1) { ... }
+## Getting started
+
+You can replicate this repository following these steps:
+
+```bash
+git clone https://github.com/ppalazon/bluepill-bm.git
+cd bluepill-bm
+git submodule update --init --recursive
 ```
 
-## Initialization
+Once you've cloned it and got all dependencies, you can start compiling and
+flashing to the Blue Pill board using the ST-Link V2 connector.
 
-To reach to super-loop of an useful application we need to answer the following
-questions:
+```bash
+make APP=cmsis-dma-mem2mem
+make APP=cmsis-dma-mem2mem flash
+```
 
-- What happens after reset
-- How the vector table and startup code reach `main()`
-- How the linker script maps Flash and RAM
-- How C runtime sections like `.data` and `.bss` are prepared
-- How peripheral registers are configured directly
+## Objectives
 
-Once, we've got a common environment for this board, creating applications
-would be easier.
+The first part is to know how to initialize the board and initialize a useful
+applications.
 
-Target hardware:
+- [x] Get datasheets and references manuals for the microcontroller STM32F103C.
+- [x] Get blue pill board manual.
+- [x] Get the memory map of the microcontroller.
+- [x] Describe what happens after the reset or power on.
+- [x] Prepare the linker script map to Flash and RAM
+- [x] Write a C runtime code to prepare `.data` and `.bss`
+- [x] Declare the vector table and startup code reach `main()`
 
-The project intentionally stays small and educational. Early `bare-*` examples
-use local register definitions only. `cmsis-*` examples can use the pinned
-STM32CubeF1 CMSIS headers while keeping that abstraction layer separate.
+The second part is to write drivers for the peripherals and test applications
+for each peripheral.
 
-Build, flash, debug, repository layout, and project workflow notes live in the
-documentation site under `docs/`.
+- [x] GPIO peripheral
+- [x] System Tick (SysTick) Timer
+- [x] General-Purpose Timers (TIM)
+- [x] The Universal Asynchronous Receiver / Transmitter Protocol (UART)
+- [x] Analog-to-Digital Converter (ADC)
+- [x] Serial Peripheral Interface (SPI)
+- [ ] Inter-Integrated Circuit (I2C)
+- [x] External Interrupts and Events (EXTI)
+- [x] The Real-Time Clock (RTC)
+- [x] Independent Watchdog (IWDG)
+- [x] Direct Memory Access (DMA)
+- [x] Power Management and Energy Efficiency
+
+The third part consists in generate these same drivers using higher level
+libraries such as Hardware Abstract Layer (HAL) and Low Layer (LL).
+
+You can read more about this project on
+[the documentation](https://pablo.palazon.dev/bluepill-bm)
 
 ## License
 
