@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Pablo Palazon
+// SPDX-License-Identifier: BSD-3-Clause
+
 #include "systick.h"
 #include "board_clock.h"
 #include "stm32f103xb.h"

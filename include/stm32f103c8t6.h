@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Pablo Palazon
+// SPDX-License-Identifier: BSD-3-Clause
+
 #ifndef STM32F103C8T6_H
 #define STM32F103C8T6_H
 

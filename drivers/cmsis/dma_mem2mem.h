@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Pablo Palazon
+// SPDX-License-Identifier: BSD-3-Clause
+
 #ifndef DMA_MEM2MEM_H
 #define DMA_MEM2MEM_H
 

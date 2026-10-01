@@ -46,9 +46,9 @@ Docs verification:
 mise exec -- mkdocs build --strict
 ```
 
-The strict MkDocs build currently emits an informational Material for MkDocs 2.0
-warning. That warning is known and is not a project failure if the build exits
-successfully.
+The strict MkDocs build currently emits an informational Material for MkDocs
+2.0 warning. That warning is known and is not a project failure if the build
+exits successfully.
 
 ## Repository Layout
 
@@ -63,7 +63,8 @@ Important paths:
 - `src/newlib_stubs.c`: minimal Newlib syscall stubs
 - `include/stm32f103c8t6.h`: local direct-register header for `bare-*` apps
 - `drivers/cmsis/`: project CMSIS-oriented driver code
-- `src/asm/startup_stm32f103c8tx.s`: reference assembly startup, not linked by default
+- `src/asm/startup_stm32f103c8tx.s`: reference assembly startup, not linked by
+  default
 - `linker/STM32F103C8TX_FLASH.ld`: active linker script
 - `openocd/bluepill.cfg`: OpenOCD config for this board/probe
 - `docs/`: MkDocs source files
@@ -74,46 +75,46 @@ Important paths:
 
 ## Documentation architecture
 
-The documentation uses four boundaries. Keep each fact in its owning section and
-link to it from summaries instead of copying it:
+The documentation uses four boundaries. Keep each fact in its owning section
+and link to it from summaries instead of copying it:
 
-- `docs/workflow/`: reusable microcontroller-development workflow, source-document
-  roles, target identification, hardware-fact extraction, and bring-up checks
-- `docs/architecture/`: processor and runtime concepts such as reset, interrupts,
-  clocks, the linker script, and startup code
-- `docs/targets/stm32f103c8t6/`: STM32F103C8T6 and Blue Pill facts, including the
-  memory map, package pinout, board wiring, and device restrictions
-- `docs/development-models/`: direct-register C, CMSIS, and comparisons with LL,
-  HAL, and RTOS development
+- `docs/workflow/`: reusable microcontroller-development workflow,
+  source-document roles, target identification, hardware-fact extraction, and
+  bring-up checks
+- `docs/architecture/`: processor and runtime concepts such as reset,
+  interrupts, clocks, the linker script, and startup code
+- `docs/targets/stm32f103c8t6/`: STM32F103C8T6 and Blue Pill facts, including
+  the memory map, package pinout, board wiring, and device restrictions
+- `docs/development-models/`: direct-register C, CMSIS, and comparisons with
+  LL, HAL, and RTOS development
 - `docs/peripherals/`: peripheral concepts and STM32F1 configuration procedures
 - `docs/applications/`: small experiments that prove one hardware concept
 - `docs/project/`: repository-specific build, flash, and debug procedures
 - `docs/reference/`: shared terminology and reference material
 
-The workflow starts with the datasheet, microcontroller reference manual, processor
-manual, errata, and board schematic. It then produces a target profile, memory map,
-linker script, startup code, register definitions, a minimal application, and
-verification steps. The STM32F103C8T6 project is the worked example, not the
-definition of the general workflow.
+The workflow starts with the datasheet, microcontroller reference manual,
+processor manual, errata, and board schematic. It then produces a target
+profile, memory map, linker script, startup code, register definitions, a
+minimal application, and verification steps. The STM32F103C8T6 project is the
+worked example, not the definition of the general workflow.
 
-When documenting a new peripheral, identify its bus and clock, reset state, pins,
-alternate functions, registers, configuration order, clock assumption, status
-flags, interrupts, and a minimal verification method. Use the existing peripheral
-pages as examples.
+When documenting a new peripheral, identify its bus and clock, reset state,
+pins, alternate functions, registers, configuration order, clock assumption,
+status flags, interrupts, and a minimal verification method. Use the existing
+peripheral pages as examples.
 
 ## Documentation writing rules
 
-Load the `simple-english` skill before writing or substantially revising technical
-documentation. Use short sentences, active voice, defined terms, clear commands,
-and simple headings.
-Load the `writing-for-agents` skill before modifying `AGENTS.md`, a skill, or any
-other instruction document. Run the strict MkDocs build after changing docs or
-navigation.
+Load the `simple-english` skill before writing or substantially revising
+technical documentation. Use short sentences, active voice, defined terms,
+clear commands, and simple headings. Load the `writing-for-agents` skill before
+modifying `AGENTS.md`, a skill, or any other instruction document. Run the
+strict MkDocs build after changing docs or navigation.
 
-Prefer short conceptual pages over copied manual chapters. State whether a claim
-comes from the processor manual, MCU reference manual, datasheet, errata, board
-documentation, source code, or a verified command. Do not silently apply an ST
-device fact to a compatible clone.
+Prefer short conceptual pages over copied manual chapters. State whether a
+claim comes from the processor manual, MCU reference manual, datasheet, errata,
+board documentation, source code, or a verified command. Do not silently apply
+an ST device fact to a compatible clone.
 
 ## Application Naming Rules
 
@@ -137,8 +138,8 @@ The Makefile enforces the current boundary:
 - `cmsis-*` apps also get CMSIS include paths and `-DUSE_CMSIS -DSTM32F103xB`.
 - `drivers/cmsis/*.c` is compiled only for `cmsis-*` apps.
 
-Do not add global CMSIS include paths to all builds. If a new app needs a layer,
-make the Makefile condition explicit and prefix the app accordingly.
+Do not add global CMSIS include paths to all builds. If a new app needs a
+layer, make the Makefile condition explicit and prefix the app accordingly.
 
 ## CMSIS And Vendor Policy
 
@@ -154,8 +155,8 @@ Current intended state:
 d12e75247d5bcedc734f829b394517ab4c2726e3 vendor/STM32CubeF1 (v1.8.7)
 ```
 
-The submodule is pinned to ST's official `v1.8.7` release tag. Do not move it to
-a branch tip unless explicitly asked.
+The submodule is pinned to ST's official `v1.8.7` release tag. Do not move it
+to a branch tip unless explicitly asked.
 
 CMSIS include paths:
 
@@ -186,8 +187,8 @@ Keep clangd configuration layered:
 - `apps/.clangd`: local include paths, with CMSIS flags for `cmsis-*` paths
 - `drivers/cmsis/.clangd`: CMSIS driver include paths and symbols
 
-Do not use global `CPATH` for this project. Do not add CMSIS include paths to the
-root `.clangd`.
+Do not use global `CPATH` for this project. Do not add CMSIS include paths to
+the root `.clangd`.
 
 Known header handling in `drivers/cmsis/.clangd`:
 
@@ -223,7 +224,8 @@ name in an app or driver overrides the default.
 The assembly startup file in `asm/` is reference material only. Do not wire it
 into the build unless explicitly asked.
 
-The active linker script is `linker/STM32F103C8TX_FLASH.ld` and currently models:
+The active linker script is `linker/STM32F103C8TX_FLASH.ld` and currently
+models:
 
 ```text
 FLASH: 0x08000000, 64K
@@ -236,8 +238,8 @@ RAM:   0x20000000, 20K
 setup. It does not yet configure HSE, PLL, 72 MHz system clock, flash wait
 states, or bus prescalers.
 
-When adding timing-sensitive code, state the assumed clock clearly. SysTick docs
-and examples should not silently assume 72 MHz until clock setup exists.
+When adding timing-sensitive code, state the assumed clock clearly. SysTick
+docs and examples should not silently assume 72 MHz until clock setup exists.
 
 ## Documentation Style
 
@@ -320,8 +322,9 @@ make APP=cmsis-blink
 For changes that affect shared runtime, startup, linker, or Makefile behavior,
 build both bare and CMSIS examples if available.
 
-For docs changes, run the strict MkDocs build. If a command cannot be run because
-the toolchain is missing or hardware is unavailable, report that clearly.
+For docs changes, run the strict MkDocs build. If a command cannot be run
+because the toolchain is missing or hardware is unavailable, report that
+clearly.
 
 ## Current Useful Next Steps
 
@@ -330,5 +333,6 @@ Likely future project additions:
 1. Add a SysTick interrupt example.
 2. Add USART1 output and implement `board_putchar()` for `printf`.
 3. Configure the STM32F103 clock tree for 72 MHz.
-4. Add more direct-register peripheral examples before introducing higher layers.
+4. Add more direct-register peripheral examples before introducing higher
+   layers.
 5. Keep improving docs with local reference-manual links.

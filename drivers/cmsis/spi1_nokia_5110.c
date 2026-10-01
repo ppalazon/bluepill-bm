@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Pablo Palazon
+// SPDX-License-Identifier: BSD-3-Clause
+
 #include "spi.h"
 #include "spi1_nokia_5110.h"
 #include "stm32f103xb.h"

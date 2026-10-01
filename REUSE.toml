@@ -24,17 +24,14 @@ path = [
     "vendor/README.md",
 ]
 precedence = "override"
-SPDX-FileCopyrightText = "Pablo Palazon (Phyxor)"
+SPDX-FileCopyrightText = "Pablo Palazon"
 SPDX-License-Identifier = "BSD-3-Clause"
 
 [[annotations]]
-path = ["**/*.c", "**/*.h", "**/*.s", "**/*.S", "linker/*.ld"]
-precedence = "closest"
-SPDX-FileCopyrightText = "Pablo Palazon (Phyxor)"
-SPDX-License-Identifier = "BSD-3-Clause"
-
-[[annotations]]
-path = "docs/refs/*.pdf"
+path = [
+  "docs/refs/*.pdf",
+  "src/asm/startup_stm32f103c8tx.s"
+]
 precedence = "override"
 SPDX-FileCopyrightText = "Copyright holders named in each document"
 SPDX-License-Identifier = "LicenseRef-ThirdParty-Documentation"

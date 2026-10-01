@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Pablo Palazon
+// SPDX-License-Identifier: BSD-3-Clause
+
 /*
  * Minimal Newlib system-call stubs for a bare-metal Cortex-M program.
  *

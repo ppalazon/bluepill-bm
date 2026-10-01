@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Pablo Palazon
+// SPDX-License-Identifier: BSD-3-Clause
+
 #ifndef BOARD_CLOCK_H
 #define BOARD_CLOCK_H
 

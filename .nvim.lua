@@ -1,3 +1,6 @@
+-- SPDX-FileCopyrightText: 2026 Pablo Palazon
+-- SPDX-License-Identifier: BSD-3-Clause
+
 local dap = require("dap")
 local root = vim.fs.root(0, { ".git" }) or vim.fn.getcwd()
 

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Pablo Palazon
+// SPDX-License-Identifier: BSD-3-Clause
+
 #include "standby_mode.h"
 #include "cmsis_gcc.h"
 #include <stdint.h>

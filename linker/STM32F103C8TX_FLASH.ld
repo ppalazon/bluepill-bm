@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Pablo Palazon
+ * SPDX-License-Identifier: BSD-3-Clause
+*/
+
 ENTRY(Reset_Handler)
 
 /* STM32F103C8T6 memory map. Keep these two lines as the board-specific part. */
