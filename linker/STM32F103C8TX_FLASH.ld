@@ -1,7 +1,9 @@
 /*
- * SPDX-FileCopyrightText: 2026 Pablo Palazon
+ * Copyright (C) 2026 Phyxor Microsystems
+ * SPDX-FileContributor: Pablo Palazon
+ *
  * SPDX-License-Identifier: BSD-3-Clause
-*/
+ */
 
 ENTRY(Reset_Handler)
 

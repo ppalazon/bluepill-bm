@@ -1,5 +1,9 @@
-// SPDX-FileCopyrightText: 2026 Pablo Palazon
-// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Copyright (C) 2026 Phyxor Microsystems
+ * SPDX-FileContributor: Pablo Palazon
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 #ifndef DMA_ADC_H
 #define DMA_ADC_H

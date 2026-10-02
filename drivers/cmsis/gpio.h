@@ -1,5 +1,9 @@
-// SPDX-FileCopyrightText: 2026 Pablo Palazon
-// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Copyright (C) 2026 Phyxor Microsystems
+ * SPDX-FileContributor: Pablo Palazon
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 #ifndef GPIO_H_
 #define GPIO_H_

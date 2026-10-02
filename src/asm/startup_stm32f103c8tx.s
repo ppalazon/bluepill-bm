@@ -1,4 +1,11 @@
 /*
+ * Copyright (C) 2026 Phyxor Microsystems
+ * SPDX-FileContributor: Pablo Palazon
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/*
  * Reference assembly startup implementation for STM32F103C8T6 / Cortex-M3.
  *
  * The active startup file used by the build is:

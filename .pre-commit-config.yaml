@@ -1,3 +1,8 @@
+# Copyright (C) 2026 Phyxor Microsystems
+# SPDX-FileContributor: Pablo Palazon
+#
+# SPDX-License-Identifier: BSD-3-Clause
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -16,6 +21,12 @@ repos:
         args: [--markdown-linebreak-ext=md]
   - repo: local
     hooks:
+      - id: reuse-annotate
+        name: reuse annotate
+        entry: >-
+          bash -c 'reuse annotate --contributor "$(git config --get user.name)" -c "Phyxor Microsystems" -l BSD-3-Clause --copyright-prefix string-c --merge-copyrights --skip-unrecognised "$@"' --
+        language: system
+        exclude: ^vendor/
       - id: clang-format
         name: clang-format
         entry: clang-format -i
